@@ -1,27 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json({ isFavorite: false })
-    }
-
     const searchParams = request.nextUrl.searchParams
     const propertyId = searchParams.get("propertyId")
+    const userId = searchParams.get("userId")
 
-    if (!propertyId) {
+    if (!propertyId || !userId) {
       return NextResponse.json({ isFavorite: false })
     }
 
     const favorite = await prisma.favorite.findUnique({
       where: {
         userId_propertyId: {
-          userId: session.user.id,
+          userId,
           propertyId,
         },
       },

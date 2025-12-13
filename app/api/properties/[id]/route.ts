@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 
 export async function GET(
@@ -46,14 +44,6 @@ export async function PUT(
 ) {
   try {
     const { id } = await params
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { error: "認証が必要です" },
-        { status: 401 }
-      )
-    }
 
     const property = await prisma.property.findUnique({
       where: { id },
@@ -63,13 +53,6 @@ export async function PUT(
       return NextResponse.json(
         { error: "物件が見つかりません" },
         { status: 404 }
-      )
-    }
-
-    if (property.userId !== session.user.id) {
-      return NextResponse.json(
-        { error: "この物件を編集する権限がありません" },
-        { status: 403 }
       )
     }
 
@@ -115,14 +98,6 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { error: "認証が必要です" },
-        { status: 401 }
-      )
-    }
 
     const property = await prisma.property.findUnique({
       where: { id },
@@ -132,13 +107,6 @@ export async function DELETE(
       return NextResponse.json(
         { error: "物件が見つかりません" },
         { status: 404 }
-      )
-    }
-
-    if (property.userId !== session.user.id) {
-      return NextResponse.json(
-        { error: "この物件を削除する権限がありません" },
-        { status: 403 }
       )
     }
 

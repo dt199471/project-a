@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 
 export async function GET(request: NextRequest) {
@@ -74,17 +72,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { error: "認証が必要です" },
-        { status: 401 }
-      )
-    }
-
     const body = await request.json()
-    const { title, description, price, address, city, prefecture, nearestStation, images } = body
+    const { title, description, price, address, city, prefecture, nearestStation, images, userId } = body
 
     if (!title || !description || !price || !address || !city || !prefecture) {
       return NextResponse.json(
@@ -103,7 +92,7 @@ export async function POST(request: NextRequest) {
         prefecture,
         nearestStation: nearestStation || null,
         images: JSON.stringify(images || []),
-        userId: session.user.id,
+        userId: userId || "default-user",
       } as any,
       include: {
         user: {

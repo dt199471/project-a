@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
 import PropertyForm from "@/components/property/PropertyForm"
 
 interface Property {
@@ -20,25 +19,20 @@ interface Property {
 export default function EditPropertyPage() {
   const params = useParams()
   const router = useRouter()
-  const { data: session, status } = useSession()
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (status === "authenticated" && params.id) {
+    if (params.id) {
       fetchProperty()
     }
-  }, [status, params.id])
+  }, [params.id])
 
   const fetchProperty = async () => {
     try {
       const response = await fetch(`/api/properties/${params.id}`)
       if (response.ok) {
         const data = await response.json()
-        if (session?.user?.id && data.userId !== session.user.id) {
-          router.push("/properties")
-          return
-        }
         setProperty(data)
       } else {
         router.push("/properties")
@@ -50,7 +44,7 @@ export default function EditPropertyPage() {
     }
   }
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -59,11 +53,6 @@ export default function EditPropertyPage() {
         </div>
       </div>
     )
-  }
-
-  if (!session) {
-    router.push("/auth/signin")
-    return null
   }
 
   if (!property) {

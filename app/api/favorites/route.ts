@@ -1,21 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { error: "認証が必要です" },
-        { status: 401 }
-      )
-    }
+    const searchParams = request.nextUrl.searchParams
+    const userId = searchParams.get("userId")
 
     const favorites = await prisma.favorite.findMany({
-      where: { userId: session.user.id },
+      where: userId ? { userId } : {},
       include: {
         property: {
           include: {
@@ -46,17 +38,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { error: "認証が必要です" },
-        { status: 401 }
-      )
-    }
-
     const body = await request.json()
-    const { propertyId } = body
+    const { propertyId, userId } = body
 
     if (!propertyId) {
       return NextResponse.json(
@@ -67,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     const favorite = await prisma.favorite.create({
       data: {
-        userId: session.user.id,
+        userId: userId || "default-user",
         propertyId,
       },
       include: {
@@ -103,17 +86,9 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { error: "認証が必要です" },
-        { status: 401 }
-      )
-    }
-
     const searchParams = request.nextUrl.searchParams
     const propertyId = searchParams.get("propertyId")
+    const userId = searchParams.get("userId")
 
     if (!propertyId) {
       return NextResponse.json(
@@ -124,7 +99,7 @@ export async function DELETE(request: NextRequest) {
 
     await prisma.favorite.deleteMany({
       where: {
-        userId: session.user.id,
+        userId: userId || "default-user",
         propertyId,
       },
     })

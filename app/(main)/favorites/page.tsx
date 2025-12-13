@@ -1,8 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
 import PropertyCard from "@/components/property/PropertyCard"
 
 interface Favorite {
@@ -24,15 +22,12 @@ interface Favorite {
 }
 
 export default function FavoritesPage() {
-  const { data: session, status } = useSession()
   const [favorites, setFavorites] = useState<Favorite[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchFavorites()
-    }
-  }, [status])
+    fetchFavorites()
+  }, [])
 
   const fetchFavorites = async () => {
     try {
@@ -48,26 +43,10 @@ export default function FavoritesPage() {
     }
   }
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">読み込み中...</div>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500 mb-4">ログインが必要です</p>
-          <Link
-            href="/auth/signin"
-            className="text-indigo-600 hover:text-indigo-700"
-          >
-            ログイン
-          </Link>
-        </div>
       </div>
     )
   }

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
 import Link from "next/link"
 
 interface Conversation {
@@ -24,15 +23,12 @@ interface Conversation {
 }
 
 export default function MessagesPage() {
-  const { data: session, status } = useSession()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchConversations()
-    }
-  }, [status])
+    fetchConversations()
+  }, [])
 
   const fetchConversations = async () => {
     try {
@@ -48,26 +44,10 @@ export default function MessagesPage() {
     }
   }
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">読み込み中...</div>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500 mb-4">ログインが必要です</p>
-          <Link
-            href="/auth/signin"
-            className="text-indigo-600 hover:text-indigo-700"
-          >
-            ログイン
-          </Link>
-        </div>
       </div>
     )
   }
