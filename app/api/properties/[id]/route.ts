@@ -5,11 +5,12 @@ import { prisma } from "@/lib/db"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const property = await prisma.property.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: {
           select: {
@@ -41,9 +42,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
 
     if (!session || !session.user?.id) {
@@ -54,7 +56,7 @@ export async function PUT(
     }
 
     const property = await prisma.property.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!property) {
@@ -75,7 +77,7 @@ export async function PUT(
     const { title, description, price, address, city, prefecture, nearestStation, images } = body
 
     const updatedProperty = await prisma.property.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: title || property.title,
         description: description || property.description,
@@ -109,9 +111,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
 
     if (!session || !session.user?.id) {
@@ -122,7 +125,7 @@ export async function DELETE(
     }
 
     const property = await prisma.property.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!property) {
@@ -140,7 +143,7 @@ export async function DELETE(
     }
 
     await prisma.property.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "物件を削除しました" })

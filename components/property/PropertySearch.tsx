@@ -36,10 +36,11 @@ export default function PropertySearch({
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
+      <h2 className="text-xl font-bold text-gray-900 mb-6">検索条件</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             キーワード検索
           </label>
           <input
@@ -47,11 +48,11 @@ export default function PropertySearch({
             value={filters.search}
             onChange={(e) => handleChange("search", e.target.value)}
             placeholder="物件名、説明、住所で検索"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             最寄り駅
           </label>
           <input
@@ -59,17 +60,17 @@ export default function PropertySearch({
             value={filters.nearestStation}
             onChange={(e) => handleChange("nearestStation", e.target.value)}
             placeholder="駅名で検索"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             都道府県
           </label>
           <select
             value={filters.prefecture}
             onChange={(e) => handleChange("prefecture", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
           >
             <option value="">すべて</option>
             {PREFECTURES.map((pref) => (
@@ -80,7 +81,7 @@ export default function PropertySearch({
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             市区町村
           </label>
           <input
@@ -88,11 +89,11 @@ export default function PropertySearch({
             value={filters.city}
             onChange={(e) => handleChange("city", e.target.value)}
             placeholder="市区町村名"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             最低価格
           </label>
           <input
@@ -100,11 +101,11 @@ export default function PropertySearch({
             value={filters.minPrice}
             onChange={(e) => handleChange("minPrice", e.target.value)}
             placeholder="0"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             最高価格
           </label>
           <input
@@ -112,11 +113,11 @@ export default function PropertySearch({
             value={filters.maxPrice}
             onChange={(e) => handleChange("maxPrice", e.target.value)}
             placeholder="無制限"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             並び替え
           </label>
           <select
@@ -125,7 +126,7 @@ export default function PropertySearch({
               const [sortBy, sortOrder] = e.target.value.split("-")
               onFiltersChange({ ...filters, sortBy, sortOrder })
             }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
           >
             <option value="createdAt-desc">新着順</option>
             <option value="createdAt-asc">古い順</option>

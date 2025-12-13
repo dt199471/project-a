@@ -2,7 +2,12 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #333333;
+  --primary: #2d5aa0;
+  --primary-dark: #1e3f73;
+  --accent: #4a9eff;
+  --text-gray: #666666;
+  --border-gray: #e5e7eb;
 }
 
 @theme inline {
@@ -12,15 +17,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: #ffffff;
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+  line-height: 1.7;
+  font-weight: 400;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+* {
+  box-sizing: border-box;
+}
+
+/* Cowcamo-inspired grid layout */
+.cowcamo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 17rem 1fr 17rem;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+@media (max-width: 1024px) {
+  .cowcamo-container {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
 }

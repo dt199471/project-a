@@ -9,37 +9,37 @@ export default function Navbar() {
   const router = useRouter()
 
   return (
-    <nav className="bg-white shadow-sm border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="cowcamo-container">
+        <div className="col-span-full flex justify-between items-center h-16 lg:h-20">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-900">
-              不動産売買
+            <Link href="/" className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+              URUCAMO
             </Link>
-            <div className="ml-10 flex items-center space-x-4">
+            <div className="ml-8 hidden lg:flex items-center space-x-6">
               <Link
                 href="/properties"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
               >
-                物件一覧
+                物件を探す
               </Link>
               {session && (
                 <>
                   <Link
                     href="/properties/new"
-                    className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                    className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
                   >
-                    物件を登録
+                    物件を売る
                   </Link>
                   <Link
                     href="/messages"
-                    className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                    className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
                   >
                     メッセージ
                   </Link>
                   <Link
                     href="/favorites"
-                    className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                    className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
                   >
                     お気に入り
                   </Link>
@@ -47,23 +47,23 @@ export default function Navbar() {
               )}
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             {status === "loading" ? (
-              <div className="text-gray-500">読み込み中...</div>
+              <div className="text-gray-400 text-sm">...</div>
             ) : session ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-700 text-sm">{session.user?.name}</span>
+              <>
+                <span className="text-gray-600 text-sm hidden sm:block">{session.user?.name}</span>
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
                 >
                   ログアウト
                 </button>
-              </div>
+              </>
             ) : (
               <Link
                 href="/auth/signin"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 ログイン
               </Link>
@@ -74,5 +74,6 @@ export default function Navbar() {
     </nav>
   )
 }
+
 
 
