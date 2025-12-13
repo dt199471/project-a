@@ -64,20 +64,27 @@ export default function PropertiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">物件一覧</h1>
-        <PropertySearch filters={filters} onFiltersChange={setFilters} />
+    <div className="min-h-screen bg-white py-8 lg:py-12">
+      <div className="cowcamo-container">
+        <div className="col-span-full lg:col-start-2 mb-8">
+          <h1 className="text-2xl lg:text-3xl font-light text-gray-900 mb-3">物件を探す</h1>
+          <p className="text-base text-gray-600">条件に合う物件を検索できます</p>
+        </div>
+        <div className="col-span-full lg:col-start-2">
+          <PropertySearch filters={filters} onFiltersChange={setFilters} />
+        </div>
         {loading ? (
-          <div className="text-center py-12">
-            <div className="text-gray-500">読み込み中...</div>
+          <div className="col-span-full lg:col-start-2 text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600 text-sm">読み込み中...</p>
           </div>
         ) : properties.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">物件が見つかりませんでした</p>
+          <div className="col-span-full lg:col-start-2 text-center py-16 bg-gray-50 rounded-lg mt-6">
+            <p className="text-lg font-medium text-gray-900 mb-2">物件が見つかりませんでした</p>
+            <p className="text-gray-600 text-sm">検索条件を変更してお試しください</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="col-span-full lg:col-start-2 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
             {properties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}

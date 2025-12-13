@@ -119,10 +119,13 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 md:p-8 border border-gray-100">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        {property ? "物件情報を編集" : "物件を登録"}
+      </h2>
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             タイトル <span className="text-red-500">*</span>
           </label>
           <input
@@ -131,12 +134,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.title}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             説明 <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -145,12 +148,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             onChange={handleChange}
             required
             rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             価格（円） <span className="text-red-500">*</span>
           </label>
           <input
@@ -160,12 +163,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             onChange={handleChange}
             required
             min="0"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             都道府県 <span className="text-red-500">*</span>
           </label>
           <select
@@ -173,7 +176,7 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.prefecture}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
           >
             <option value="">選択してください</option>
             {PREFECTURES.map((pref) => (
@@ -185,7 +188,7 @@ export default function PropertyForm({ property }: PropertyFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             市区町村 <span className="text-red-500">*</span>
           </label>
           <input
@@ -194,12 +197,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.city}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             住所 <span className="text-red-500">*</span>
           </label>
           <input
@@ -208,12 +211,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.address}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             最寄り駅
           </label>
           <input
@@ -222,12 +225,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.nearestStation}
             onChange={handleChange}
             placeholder="例: 東京駅、新宿駅"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             画像
           </label>
           <input
@@ -235,21 +238,21 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             accept="image/*"
             multiple
             onChange={handleImageChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
           {formData.images.length > 0 && (
-            <div className="mt-4 grid grid-cols-4 gap-4">
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
               {formData.images.map((img: string, index: number) => (
-                <div key={index} className="relative">
+                <div key={index} className="relative group">
                   <img
                     src={img}
                     alt={`Preview ${index + 1}`}
-                    className="w-full h-32 object-cover rounded"
+                    className="w-full h-32 object-cover rounded-lg border border-gray-200"
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm hover:bg-red-600 transition-colors shadow-md"
                   >
                     ×
                   </button>
@@ -259,18 +262,18 @@ export default function PropertyForm({ property }: PropertyFormProps) {
           )}
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all shadow-md hover:shadow-lg"
           >
-            {loading ? "送信中..." : property ? "更新" : "登録"}
+            {loading ? "送信中..." : property ? "更新する" : "登録する"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold transition-colors"
           >
             キャンセル
           </button>
