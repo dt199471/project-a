@@ -95,8 +95,11 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    // BigIntをNumberに変換（JSONシリアライズのため）
+    const propertiesWithNumber = properties.map((p: any) => ({ ...p, price: Number(p.price) }))
+    
     return NextResponse.json({
-      properties,
+      properties: propertiesWithNumber,
       pagination: {
         page,
         limit,
@@ -124,7 +127,6 @@ export async function POST(request: NextRequest) {
       managementFee, repairReserve, renovationHistory, status,
       images, userId 
     } = body
-
 
     if (!title || !description || !price || !address || !city || !prefecture) {
       return NextResponse.json(
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         description,
-        price: parseInt(price),
+        price: BigInt(price),
         address,
         city,
         prefecture,
@@ -188,7 +190,9 @@ export async function POST(request: NextRequest) {
     })
 
 
-    return NextResponse.json(property, { status: 201 })
+    // BigIntをNumberに変換（JSONシリアライズのため）
+    const propertyWithNumber = { ...property, price: Number(property.price) }
+    return NextResponse.json(propertyWithNumber, { status: 201 })
   } catch (error) {
     console.error("Error creating property:", error)
     return NextResponse.json(

@@ -183,7 +183,7 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-gray-200">
+    <form onSubmit={handleSubmit} className="bg-white">
       <div className="space-y-8">
         {/* ステータス（編集時のみ表示） */}
         {property && (

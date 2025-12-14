@@ -28,7 +28,9 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(property)
+    // BigIntをNumberに変換（JSONシリアライズのため）
+    const propertyWithNumber = { ...property, price: Number(property.price) }
+    return NextResponse.json(propertyWithNumber)
   } catch (error) {
     console.error("Error fetching property:", error)
     return NextResponse.json(
@@ -70,7 +72,7 @@ export async function PUT(
       data: {
         title: title || property.title,
         description: description || property.description,
-        price: price ? parseInt(price) : property.price,
+        price: price ? BigInt(price) : property.price,
         address: address || property.address,
         city: city || property.city,
         prefecture: prefecture || property.prefecture,
@@ -102,7 +104,9 @@ export async function PUT(
       },
     })
 
-    return NextResponse.json(updatedProperty)
+    // BigIntをNumberに変換（JSONシリアライズのため）
+    const updatedPropertyWithNumber = { ...updatedProperty, price: Number(updatedProperty.price) }
+    return NextResponse.json(updatedPropertyWithNumber)
   } catch (error) {
     console.error("Error updating property:", error)
     return NextResponse.json(

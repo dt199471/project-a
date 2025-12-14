@@ -28,7 +28,7 @@ model Property {
   id            String    @id @default(cuid())
   title         String
   description   String
-  price         Int
+  price         BigInt
   address       String
   city          String
   prefecture    String
