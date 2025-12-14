@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "不動産売買プラットフォーム",
-  description: "個人間で不動産を売買できるプラットフォーム",
+  title: "Selfie Home",
+  description: "気軽に、安心に、あなたの家を。",
 };
 
 export default function RootLayout({

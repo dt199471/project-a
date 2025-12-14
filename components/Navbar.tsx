@@ -13,7 +13,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-light text-gray-900 tracking-wide">
-              URUCAMO
+              Selfie Home
             </Link>
           </div>
 

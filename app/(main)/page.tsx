@@ -7,12 +7,11 @@ export default function HomePage() {
       <div className="bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="max-w-3xl">
-            <p className="text-sm tracking-widest uppercase mb-4 text-gray-400">BUY</p>
-            <h1 className="text-4xl lg:text-6xl font-light leading-tight mb-6">
-              高級中古マンションを<br />買う
+            <h1 className="text-4xl lg:text-6xl font-light leading-tight mb-4">
+              Selfie Home
             </h1>
             <p className="text-lg text-gray-300 leading-relaxed mb-8">
-              厳選された977件の物件から、あなたにぴったりの住まいを見つけてください
+              気軽に、安心に、あなたの家を。
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link

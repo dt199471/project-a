@@ -164,6 +164,54 @@ export default function PropertyDetailPage() {
           </p>
         </div>
 
+        {/* PROPERTY DETAIL Section */}
+        <div className="mb-12 border-t border-gray-200 pt-12">
+          <p className="text-sm tracking-widest uppercase mb-6 text-gray-500">PROPERTY DETAIL</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex border-b border-gray-200 pb-4">
+              <dt className="w-40 text-sm text-gray-600 font-light">販売価格</dt>
+              <dd className="flex-1 text-sm text-gray-900 font-light">
+                {property.price.toLocaleString()}万円
+              </dd>
+            </div>
+            {property.buildYear && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">築年月</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.buildYear}年{property.buildMonth ? `${property.buildMonth}月` : ''}築
+                </dd>
+              </div>
+            )}
+            {(property.layout || property.area) && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">間取り</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.layout || '-'}
+                  {property.area && ` / ${property.area}㎡`}
+                </dd>
+              </div>
+            )}
+            <div className="flex border-b border-gray-200 pb-4">
+              <dt className="w-40 text-sm text-gray-600 font-light">所在地</dt>
+              <dd className="flex-1 text-sm text-gray-900 font-light">
+                {property.prefecture}{property.city}{property.address}
+              </dd>
+            </div>
+            {property.nearestStation && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">最寄り駅</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.nearestStation}
+                </dd>
+              </div>
+            )}
+            <div className="flex border-b border-gray-200 pb-4">
+              <dt className="w-40 text-sm text-gray-600 font-light">物件種別</dt>
+              <dd className="flex-1 text-sm text-gray-900 font-light">マンション</dd>
+            </div>
+          </div>
+        </div>
+
         {/* Nearest Station */}
         {property.nearestStation && (
           <div className="mb-12 border-t border-gray-200 pt-12">
