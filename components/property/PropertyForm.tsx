@@ -171,8 +171,8 @@ export default function PropertyForm({ property }: PropertyFormProps) {
       })
 
       if (response.ok) {
-        const data = await response.json()
-        router.push(`/properties/${data.id}`)
+        // 登録/編集後はマイページに遷移
+        router.push("/mypage")
       } else {
         const error = await response.json()
         alert(error.error || "登録に失敗しました")

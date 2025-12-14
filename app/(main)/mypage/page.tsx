@@ -12,6 +12,14 @@ interface Property {
   images: string
   status: string
   createdAt: string
+  prefecture?: string
+  city?: string
+  address?: string
+  buildYear?: number | null
+  buildMonth?: number | null
+  layout?: string | null
+  area?: number | null
+  description?: string
 }
 
 interface UserData {
@@ -35,6 +43,7 @@ export default function MyPage() {
   const router = useRouter()
   const [userData, setUserData] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [previewProperty, setPreviewProperty] = useState<Property | null>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -161,7 +170,7 @@ export default function MyPage() {
               <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200">
                 <div className="text-center">
                   <p className="text-2xl font-light text-gray-900">{userData?._count.properties || 0}</p>
-                  <p className="text-xs text-gray-500">出品物件</p>
+                  <p className="text-xs text-gray-500">登録物件</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-light text-gray-900">{userData?._count.favorites || 0}</p>
@@ -186,15 +195,15 @@ export default function MyPage() {
             </div>
           </div>
 
-          {/* 出品物件一覧 */}
+          {/* 登録物件一覧 */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-medium text-gray-900">出品物件</h3>
+              <h3 className="text-lg font-medium text-gray-900">登録物件</h3>
               <Link
                 href="/properties/new"
                 className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
               >
-                新規出品
+                新規登録
               </Link>
             </div>
 
@@ -234,6 +243,12 @@ export default function MyPage() {
                           </p>
                         </div>
                         <div className="flex gap-2">
+                          <button
+                            onClick={() => setPreviewProperty(property)}
+                            className="px-3 py-1.5 text-xs border border-blue-500 text-blue-600 hover:bg-blue-50 transition-colors"
+                          >
+                            プレビュー
+                          </button>
                           <Link
                             href={`/properties/${property.id}`}
                             className="px-3 py-1.5 text-xs border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
@@ -257,12 +272,12 @@ export default function MyPage() {
                 <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <p className="text-gray-600 mb-4">出品中の物件がありません</p>
+                <p className="text-gray-600 mb-4">登録済みの物件がありません</p>
                 <Link
                   href="/properties/new"
                   className="inline-block px-6 py-3 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
                 >
-                  物件を出品する
+                  物件を登録する
                 </Link>
               </div>
             )}
@@ -295,6 +310,178 @@ export default function MyPage() {
           </div>
         </div>
       </div>
+
+      {/* プレビューモーダル */}
+      {previewProperty && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* モーダルヘッダー */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-blue-600 font-medium mb-1">掲載プレビュー</p>
+                <h2 className="text-lg font-medium text-gray-900">実際の表示イメージ</h2>
+              </div>
+              <button
+                onClick={() => setPreviewProperty(null)}
+                className="p-2 hover:bg-gray-100 transition-colors"
+              >
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* プレビューコンテンツ */}
+            <div className="p-6">
+              {/* カード形式プレビュー */}
+              <div className="mb-8">
+                <p className="text-sm text-gray-500 mb-3">■ 物件一覧での表示</p>
+                <div className="max-w-sm bg-white border border-gray-200 shadow-md overflow-hidden">
+                  <div className="relative h-48 bg-gray-100 overflow-hidden">
+                    {(() => {
+                      const images = previewProperty.images ? JSON.parse(previewProperty.images) : []
+                      const firstImage = images[0]
+                      return firstImage ? (
+                        <img
+                          src={firstImage}
+                          alt={previewProperty.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )
+                    })()}
+                    <div className="absolute top-3 left-3">
+                      {getStatusBadge(previewProperty.status)}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2">
+                      {previewProperty.title || "（物件名未設定）"}
+                    </h3>
+                    <p className="text-lg font-light text-gray-900 mb-2">
+                      {previewProperty.price ? `${previewProperty.price.toLocaleString()}万円` : "価格未設定"}
+                    </p>
+                    {previewProperty.buildYear && (
+                      <p className="text-xs text-gray-600 mb-1">
+                        {previewProperty.buildYear}年{previewProperty.buildMonth ? `${previewProperty.buildMonth}月` : ''}築
+                      </p>
+                    )}
+                    {(previewProperty.layout || previewProperty.area) && (
+                      <p className="text-xs text-gray-600">
+                        {previewProperty.layout || ''}{previewProperty.layout && previewProperty.area ? ' / ' : ''}{previewProperty.area ? `${previewProperty.area}㎡` : ''}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 詳細ページプレビュー */}
+              <div>
+                <p className="text-sm text-gray-500 mb-3">■ 物件詳細ページでの表示</p>
+                <div className="border border-gray-200">
+                  {/* ヘッダー */}
+                  <div className="bg-gray-900 text-white p-6">
+                    <p className="text-sm text-gray-300 mb-2">
+                      {previewProperty.prefecture || ''}{previewProperty.city || ''}
+                    </p>
+                    <h1 className="text-2xl font-light">
+                      {previewProperty.title || "（物件名未設定）"}
+                    </h1>
+                  </div>
+                  
+                  {/* メイン画像 */}
+                  <div className="h-64 bg-gray-100 flex items-center justify-center">
+                    {(() => {
+                      const images = previewProperty.images ? JSON.parse(previewProperty.images) : []
+                      const firstImage = images[0]
+                      return firstImage ? (
+                        <img
+                          src={firstImage}
+                          alt={previewProperty.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-gray-400 text-center">
+                          <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <p className="text-sm">画像が設定されていません</p>
+                        </div>
+                      )
+                    })()}
+                  </div>
+                  
+                  {/* 物件情報 */}
+                  <div className="p-6">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="flex">
+                        <dt className="w-24 text-gray-500">販売価格</dt>
+                        <dd className="text-gray-900 font-medium">
+                          {previewProperty.price ? `${previewProperty.price.toLocaleString()}万円` : "未設定"}
+                        </dd>
+                      </div>
+                      <div className="flex">
+                        <dt className="w-24 text-gray-500">築年月</dt>
+                        <dd className="text-gray-900">
+                          {previewProperty.buildYear ? `${previewProperty.buildYear}年${previewProperty.buildMonth ? `${previewProperty.buildMonth}月` : ''}` : "未設定"}
+                        </dd>
+                      </div>
+                      <div className="flex">
+                        <dt className="w-24 text-gray-500">所在地</dt>
+                        <dd className="text-gray-900">
+                          {previewProperty.prefecture || previewProperty.city || previewProperty.address 
+                            ? `${previewProperty.prefecture || ''}${previewProperty.city || ''}${previewProperty.address || ''}`
+                            : "未設定"}
+                        </dd>
+                      </div>
+                      <div className="flex">
+                        <dt className="w-24 text-gray-500">間取り</dt>
+                        <dd className="text-gray-900">
+                          {previewProperty.layout || previewProperty.area 
+                            ? `${previewProperty.layout || ''}${previewProperty.layout && previewProperty.area ? ' / ' : ''}${previewProperty.area ? `${previewProperty.area}㎡` : ''}`
+                            : "未設定"}
+                        </dd>
+                      </div>
+                    </div>
+                    
+                    {previewProperty.description && (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-sm font-medium text-gray-900 mb-2">物件説明</h3>
+                        <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-4">
+                          {previewProperty.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* アクションボタン */}
+              <div className="mt-6 flex gap-4">
+                <Link
+                  href={`/properties/${previewProperty.id}/edit`}
+                  className="flex-1 py-3 text-center bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+                  onClick={() => setPreviewProperty(null)}
+                >
+                  編集する
+                </Link>
+                <Link
+                  href={`/properties/${previewProperty.id}`}
+                  className="flex-1 py-3 text-center border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+                  onClick={() => setPreviewProperty(null)}
+                >
+                  実際のページを見る
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
