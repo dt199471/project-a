@@ -30,7 +30,7 @@ export default function HomePage() {
       const response = await fetch('/api/properties?limit=4')
       if (response.ok) {
         const data = await response.json()
-        setRecommendedProperties(data.slice(0, 4))
+        setRecommendedProperties(data.properties?.slice(0, 4) || [])
       }
     } catch (error) {
       console.error("Error fetching properties:", error)

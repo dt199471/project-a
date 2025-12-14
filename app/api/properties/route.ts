@@ -68,12 +68,22 @@ export async function GET(request: NextRequest) {
       where.buildYear = { ...where.buildYear, lte: parseInt(maxBuildYear) }
     }
 
+    // ページネーション
+    const page = parseInt(searchParams.get("page") || "1")
+    const limit = parseInt(searchParams.get("limit") || "20")
+    const skip = (page - 1) * limit
+
     const orderBy: any = {}
     orderBy[sortBy] = sortOrder
+
+    // 総件数を取得
+    const totalCount = await prisma.property.count({ where })
 
     const properties = await prisma.property.findMany({
       where,
       orderBy,
+      skip,
+      take: limit,
       include: {
         user: {
           select: {
@@ -85,7 +95,16 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(properties)
+    return NextResponse.json({
+      properties,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasMore: page * limit < totalCount,
+      },
+    })
   } catch (error) {
     console.error("Error fetching properties:", error)
     return NextResponse.json(
