@@ -63,35 +63,35 @@ export default function PropertySummaryCard({ property, buildYear, buildMonth, l
             {property.title}
           </h2>
 
-          <div className="space-y-4">
-            <div className="flex pb-4">
-              <dt className="w-32 text-sm text-gray-600">販売価格</dt>
+          <div className="space-y-3">
+            <div className="flex py-2">
+              <dt className="w-24 text-sm text-gray-600">販売価格</dt>
               <dd className="flex-1 text-lg font-light text-gray-900">
                 {property.price.toLocaleString()}万円
               </dd>
             </div>
 
             {buildDate && (
-              <div className="flex pb-4">
-                <dt className="w-32 text-sm text-gray-600">築年月</dt>
+              <div className="flex py-2">
+                <dt className="w-24 text-sm text-gray-600">築年月</dt>
                 <dd className="flex-1 text-sm text-gray-900">{buildDate}</dd>
               </div>
             )}
 
-            <div className="flex pb-4">
-              <dt className="w-32 text-sm text-gray-600">所在地</dt>
+            <div className="flex py-2">
+              <dt className="w-24 text-sm text-gray-600">所在地</dt>
               <dd className="flex-1 text-sm text-gray-900">
                 {property.prefecture}{property.city}{property.address}
               </dd>
             </div>
 
             {(layout || area) && (
-              <div className="flex pb-4">
-                <dt className="w-32 text-sm text-gray-600">間取り</dt>
+              <div className="flex py-2">
+                <dt className="w-24 text-sm text-gray-600">間取り</dt>
                 <dd className="flex-1 text-sm text-gray-900">
                   {layout && <span>{layout}</span>}
                   {layout && area && <span> / </span>}
-                  {area && <span>{area}m² 〜 {(area * 1.8).toFixed(2)}m²</span>}
+                  {area && <span>{area}㎡</span>}
                 </dd>
               </div>
             )}

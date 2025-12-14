@@ -1,6 +1,44 @@
+"use client"
+
 import Link from "next/link"
+import { useEffect, useState } from "react"
+
+interface Property {
+  id: string
+  title: string
+  price: number
+  prefecture: string
+  city: string
+  address: string
+  buildYear?: number | null
+  buildMonth?: number | null
+  layout?: string | null
+  area?: number | null
+  images: string
+}
 
 export default function HomePage() {
+  const [recommendedProperties, setRecommendedProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchRecommendedProperties()
+  }, [])
+
+  const fetchRecommendedProperties = async () => {
+    try {
+      const response = await fetch('/api/properties?limit=4')
+      if (response.ok) {
+        const data = await response.json()
+        setRecommendedProperties(data.slice(0, 4))
+      }
+    } catch (error) {
+      console.error("Error fetching properties:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section - Modern Standard Style */}
@@ -81,13 +119,96 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Recommended Properties Section */}
+      <div className="bg-white py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-10">
+            <p className="text-sm tracking-widest uppercase mb-3 text-gray-500">RECOMMENDED</p>
+            <h2 className="text-2xl lg:text-3xl font-light text-gray-900">おすすめ物件</h2>
+          </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+          ) : recommendedProperties.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {recommendedProperties.map((property) => {
+                const images = property.images ? JSON.parse(property.images) : []
+                const firstImage = images[0]
+                
+                // 築年月を計算
+                let buildDate = null
+                if (property.buildYear) {
+                  const currentYear = new Date().getFullYear()
+                  const years = currentYear - property.buildYear
+                  buildDate = `${property.buildYear}年${property.buildMonth ? `${property.buildMonth}月` : ''}築（${years}年）`
+                }
+
+                return (
+                  <Link key={property.id} href={`/properties/${property.id}`}>
+                    <div className="group bg-white border border-gray-200 hover:border-gray-900 transition-all shadow-sm hover:shadow-md overflow-hidden">
+                      <div className="relative h-32 bg-gray-100 overflow-hidden">
+                        {firstImage ? (
+                          <img
+                            src={firstImage}
+                            alt={property.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-1">
+                          {property.title}
+                        </h3>
+                        <p className="text-base font-light text-gray-900 mb-1">
+                          {property.price.toLocaleString()}万円
+                        </p>
+                        {buildDate && (
+                          <p className="text-xs text-gray-600 mb-0.5">{buildDate}</p>
+                        )}
+                        <p className="text-xs text-gray-600 mb-0.5">
+                          {property.prefecture}{property.city}
+                        </p>
+                        {property.layout && (
+                          <p className="text-xs text-gray-600">
+                            {property.layout}{property.area && ` / ${property.area}㎡`}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 border border-gray-200">
+              <p className="text-gray-600 text-sm">現在おすすめ物件はありません</p>
+            </div>
+          )}
+          <div className="text-center mt-8">
+            <Link
+              href="/properties"
+              className="inline-block px-8 py-3 border border-gray-900 text-gray-900 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors"
+            >
+              すべての物件を見る
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* AI Features Section */}
-      <div className="bg-white py-16 lg:py-24">
+      <div className="bg-gray-50 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">FEATURES</p>
             <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">
-              URUCAMOが選ばれる理由
+              Selfie Homeが選ばれる理由
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               最新のテクノロジーと専門知識を活用し、理想の住まい探しをサポートします
