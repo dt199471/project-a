@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
 
 const PREFECTURES = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -71,6 +72,7 @@ interface PropertyFormProps {
 
 export default function PropertyForm({ property }: PropertyFormProps) {
   const router = useRouter()
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     title: property?.title || "",
@@ -152,6 +154,7 @@ export default function PropertyForm({ property }: PropertyFormProps) {
       const payload = {
         ...formData,
         images: uploadedImages.length > 0 ? uploadedImages : formData.images,
+        userId: user?.id,
       }
 
       const url = property

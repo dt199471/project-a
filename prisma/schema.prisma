@@ -13,8 +13,11 @@ datasource db {
 
 model User {
   id            String    @id @default(cuid())
+  loginId       String    @unique // ログイン用ID
   name          String?
-  email         String?   @unique
+  email         String?
+  phone         String?   // 電話番号
+  bio           String?   // 自己紹介
   image         String?
   properties    Property[]
   sentMessages  Message[] @relation("SentMessages")
