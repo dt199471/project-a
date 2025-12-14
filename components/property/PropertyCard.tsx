@@ -1,4 +1,8 @@
+"use client"
+
 import Link from "next/link"
+import { useState, useEffect } from "react"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface PropertyCardProps {
   property: {
@@ -16,6 +20,7 @@ interface PropertyCardProps {
     area?: number | null
     status?: string
     images: string
+    userId?: string
     user: {
       name: string | null
       image: string | null
@@ -31,8 +36,67 @@ const STATUS_LABELS: { [key: string]: { label: string; color: string } } = {
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const { user } = useAuth()
+  const [isFavorite, setIsFavorite] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const images = property.images ? JSON.parse(property.images) : []
   const firstImage = images[0]
+
+  // ログインしている場合、お気に入り状態を確認
+  useEffect(() => {
+    if (user?.id && property.id) {
+      checkFavoriteStatus()
+    }
+  }, [user?.id, property.id])
+
+  const checkFavoriteStatus = async () => {
+    try {
+      const response = await fetch(`/api/favorites/check?propertyId=${property.id}&userId=${user?.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setIsFavorite(data.isFavorite)
+      }
+    } catch (error) {
+      console.error("Error checking favorite status:", error)
+    }
+  }
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (!user?.id) {
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      if (isFavorite) {
+        const response = await fetch(`/api/favorites?propertyId=${property.id}&userId=${user.id}`, {
+          method: "DELETE",
+        })
+        if (response.ok) {
+          setIsFavorite(false)
+        }
+      } else {
+        const response = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            propertyId: property.id,
+            userId: user.id,
+          }),
+        })
+        if (response.ok) {
+          setIsFavorite(true)
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // 築年月を計算
   let buildDate = null
@@ -83,6 +147,25 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <div className={`absolute top-4 left-4 px-3 py-1 text-xs font-medium text-white ${STATUS_LABELS[property.status]?.color || 'bg-gray-500'}`}>
               {STATUS_LABELS[property.status]?.label || property.status}
             </div>
+          )}
+          {/* お気に入りボタン（ハートマーク） */}
+          {user && user.id !== property.userId && (
+            <button
+              onClick={handleFavoriteClick}
+              disabled={isLoading}
+              className="absolute top-4 right-4 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-all z-10"
+              aria-label={isFavorite ? "お気に入りから削除" : "お気に入りに追加"}
+            >
+              {isFavorite ? (
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              )}
+            </button>
           )}
         </div>
         <div className="p-6">
