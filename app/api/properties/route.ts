@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       title, description, price, address, city, prefecture, nearestStation, 
       buildYear, buildMonth, layout, area, 
       structure, floor, totalFloors, direction, parking, petAllowed,
-      managementFee, repairReserve, renovationHistory,
+      managementFee, repairReserve, renovationHistory, status,
       images, userId 
     } = body
 
@@ -172,6 +172,7 @@ export async function POST(request: NextRequest) {
         managementFee: managementFee ? parseInt(managementFee) : null,
         repairReserve: repairReserve ? parseInt(repairReserve) : null,
         renovationHistory: renovationHistory || null,
+        status: status || "ACTIVE",
         images: JSON.stringify(images || []),
         userId: finalUserId,
       } as any,

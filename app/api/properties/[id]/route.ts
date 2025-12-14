@@ -61,7 +61,7 @@ export async function PUT(
       title, description, price, address, city, prefecture, nearestStation, 
       buildYear, buildMonth, layout, area, 
       structure, floor, totalFloors, direction, parking, petAllowed,
-      managementFee, repairReserve, renovationHistory,
+      managementFee, repairReserve, renovationHistory, status,
       images 
     } = body
 
@@ -88,6 +88,7 @@ export async function PUT(
         managementFee: managementFee !== undefined ? (managementFee ? parseInt(managementFee) : null) : (property as any).managementFee,
         repairReserve: repairReserve !== undefined ? (repairReserve ? parseInt(repairReserve) : null) : (property as any).repairReserve,
         renovationHistory: renovationHistory !== undefined ? (renovationHistory || null) : (property as any).renovationHistory,
+        status: status !== undefined ? status : (property as any).status,
         images: images ? JSON.stringify(images) : property.images,
       } as any,
       include: {

@@ -34,6 +34,13 @@ const LAYOUTS = [
   "5K以上"
 ]
 
+const STATUSES = [
+  { value: "ACTIVE", label: "公開中" },
+  { value: "NEGOTIATING", label: "交渉中" },
+  { value: "SOLD", label: "成約済み" },
+  { value: "DRAFT", label: "下書き" },
+]
+
 interface PropertyFormProps {
   property?: {
     id: string
@@ -57,6 +64,7 @@ interface PropertyFormProps {
     managementFee?: number | null
     repairReserve?: number | null
     renovationHistory?: string | null
+    status?: string
     images: string
   }
 }
@@ -85,6 +93,7 @@ export default function PropertyForm({ property }: PropertyFormProps) {
     managementFee: property?.managementFee?.toString() || "",
     repairReserve: property?.repairReserve?.toString() || "",
     renovationHistory: property?.renovationHistory || "",
+    status: property?.status || "ACTIVE",
     images: property?.images ? JSON.parse(property.images) : [] as string[],
   })
 
@@ -176,6 +185,31 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   return (
     <form onSubmit={handleSubmit} className="bg-white border border-gray-200">
       <div className="space-y-8">
+        {/* ステータス（編集時のみ表示） */}
+        {property && (
+          <div className="bg-gray-50 p-4 border-b border-gray-200 -mx-0 -mt-0">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              物件ステータス
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors bg-white text-sm"
+            >
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs text-gray-500">
+              {formData.status === 'DRAFT' && '下書きは公開されません'}
+              {formData.status === 'NEGOTIATING' && '交渉中の物件として表示されます'}
+              {formData.status === 'SOLD' && '成約済みの物件として表示されます'}
+              {formData.status === 'ACTIVE' && '現在公開中です'}
+            </p>
+          </div>
+        )}
+
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-2">
             タイトル <span className="text-red-500">*</span>

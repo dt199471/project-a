@@ -14,12 +14,20 @@ interface PropertyCardProps {
     buildMonth?: number | null
     layout?: string | null
     area?: number | null
+    status?: string
     images: string
     user: {
       name: string | null
       image: string | null
     }
   }
+}
+
+const STATUS_LABELS: { [key: string]: { label: string; color: string } } = {
+  ACTIVE: { label: "公開中", color: "bg-green-500" },
+  NEGOTIATING: { label: "交渉中", color: "bg-yellow-500" },
+  SOLD: { label: "成約済み", color: "bg-red-500" },
+  DRAFT: { label: "下書き", color: "bg-gray-500" },
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
@@ -61,13 +69,19 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <img
               src={firstImage}
               alt={property.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${property.status === 'SOLD' ? 'opacity-60' : ''}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
+            </div>
+          )}
+          {/* ステータスバッジ */}
+          {property.status && property.status !== 'ACTIVE' && (
+            <div className={`absolute top-4 left-4 px-3 py-1 text-xs font-medium text-white ${STATUS_LABELS[property.status]?.color || 'bg-gray-500'}`}>
+              {STATUS_LABELS[property.status]?.label || property.status}
             </div>
           )}
         </div>
