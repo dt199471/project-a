@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
 import PropertyMessageForm from "@/components/property/PropertyMessageForm"
 import FavoriteButton from "@/components/property/FavoriteButton"
 import PropertySummaryCard from "@/components/property/PropertySummaryCard"
@@ -43,22 +44,16 @@ interface Property {
 export default function PropertyDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const { user } = useAuth()
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Get current user from localStorage
-    const userId = localStorage.getItem('userId')
-    setCurrentUserId(userId)
-  }, [])
 
   useEffect(() => {
     if (params.id) {
       fetchProperty()
     }
-  }, [params.id, currentUserId])
+  }, [params.id, user?.id])
 
   const fetchProperty = async () => {
     try {
@@ -66,7 +61,7 @@ export default function PropertyDetailPage() {
       if (response.ok) {
         const data = await response.json()
         setProperty(data)
-        if (currentUserId && data.userId === currentUserId) {
+        if (user?.id && data.userId === user.id) {
           setIsOwner(true)
         }
       } else {
@@ -129,7 +124,7 @@ export default function PropertyDetailPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <p className="text-sm tracking-widest uppercase text-gray-500">PROPERTY DETAIL</p>
-            {currentUserId && !isOwner && (
+            {user && !isOwner && (
               <FavoriteButton propertyId={property.id} />
             )}
           </div>
@@ -139,13 +134,21 @@ export default function PropertyDetailPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Property Summary Card */}
         <div className="mb-12">
-          <PropertySummaryCard
-            property={property}
-            buildYear={property.buildYear}
-            buildMonth={property.buildMonth}
-            layout={property.layout}
-            area={property.area}
-          />
+          <div className="relative">
+            <PropertySummaryCard
+              property={property}
+              buildYear={property.buildYear}
+              buildMonth={property.buildMonth}
+              layout={property.layout}
+              area={property.area}
+            />
+            {/* お気に入りボタン（タイル内） */}
+            {user && !isOwner && (
+              <div className="absolute top-4 right-4 z-10">
+                <FavoriteButton propertyId={property.id} />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Additional Images */}
@@ -176,7 +179,13 @@ export default function PropertyDetailPage() {
 
         {/* PROPERTY DETAIL Section */}
         <div className="mb-12 border-t border-gray-200 pt-12">
-          <p className="text-sm tracking-widest uppercase mb-6 text-gray-500">PROPERTY DETAIL</p>
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm tracking-widest uppercase text-gray-500">PROPERTY DETAIL</p>
+            {/* お気に入りボタン（PROPERTY DETAIL内） */}
+            {user && !isOwner && (
+              <FavoriteButton propertyId={property.id} />
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex border-b border-gray-200 pb-4">
               <dt className="w-40 text-sm text-gray-600 font-light">販売価格</dt>

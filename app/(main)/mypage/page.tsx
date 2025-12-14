@@ -38,12 +38,32 @@ interface UserData {
   createdAt: string
 }
 
+interface FavoriteProperty {
+  id: string
+  property: {
+    id: string
+    title: string
+    price: number
+    images: string
+    prefecture: string
+    city: string
+    buildYear?: number | null
+    buildMonth?: number | null
+    layout?: string | null
+    area?: number | null
+    status: string
+  }
+  createdAt: string
+}
+
 export default function MyPage() {
   const { user, loading: authLoading, logout } = useAuth()
   const router = useRouter()
   const [userData, setUserData] = useState<UserData | null>(null)
+  const [favoriteProperties, setFavoriteProperties] = useState<FavoriteProperty[]>([])
   const [loading, setLoading] = useState(true)
   const [previewProperty, setPreviewProperty] = useState<Property | null>(null)
+  const [activeTab, setActiveTab] = useState<"sell" | "buy">("sell")
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -54,6 +74,7 @@ export default function MyPage() {
   useEffect(() => {
     if (user?.id) {
       fetchUserData()
+      fetchFavoriteProperties()
     }
   }, [user?.id])
 
@@ -70,6 +91,27 @@ export default function MyPage() {
       console.error("Error fetching user data:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchFavoriteProperties = async () => {
+    if (!user?.id) return
+    
+    try {
+      const response = await fetch(`/api/favorites?userId=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        const favoritesWithNumber = data.map((fav: any) => ({
+          ...fav,
+          property: {
+            ...fav.property,
+            price: Number(fav.property.price),
+          },
+        }))
+        setFavoriteProperties(favoritesWithNumber)
+      }
+    } catch (error) {
+      console.error("Error fetching favorites:", error)
     }
   }
 
@@ -173,7 +215,7 @@ export default function MyPage() {
                   <p className="text-xs text-gray-500">登録物件</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-light text-gray-900">{userData?._count.favorites || 0}</p>
+                  <p className="text-2xl font-light text-gray-900">{favoriteProperties.length}</p>
                   <p className="text-xs text-gray-500">お気に入り</p>
                 </div>
               </div>
@@ -195,19 +237,45 @@ export default function MyPage() {
             </div>
           </div>
 
-          {/* 登録物件一覧 */}
+          {/* タブ切り替え */}
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-medium text-gray-900">登録物件</h3>
-              <Link
-                href="/properties/new"
-                className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+            <div className="flex border-b border-gray-200 mb-6">
+              <button
+                onClick={() => setActiveTab("sell")}
+                className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === "sell"
+                    ? "border-gray-900 text-gray-900"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
-                新規登録
-              </Link>
+                売却検討者向け
+              </button>
+              <button
+                onClick={() => setActiveTab("buy")}
+                className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === "buy"
+                    ? "border-gray-900 text-gray-900"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                購入検討者向け
+              </button>
             </div>
 
-            {userData?.properties && userData.properties.length > 0 ? (
+            {/* 売却検討者向けタブ */}
+            {activeTab === "sell" && (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-medium text-gray-900">登録物件</h3>
+                  <Link
+                    href="/properties/new"
+                    className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    新規登録
+                  </Link>
+                </div>
+
+                {userData?.properties && userData.properties.length > 0 ? (
               <div className="space-y-4">
                 {userData.properties.map((property) => {
                   const images = property.images ? JSON.parse(property.images) : []
@@ -280,6 +348,105 @@ export default function MyPage() {
                   物件を登録する
                 </Link>
               </div>
+                )}
+              </>
+            )}
+
+            {/* 購入検討者向けタブ */}
+            {activeTab === "buy" && (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-medium text-gray-900">お気に入り物件</h3>
+                  <span className="text-sm text-gray-500">{favoriteProperties.length}件</span>
+                </div>
+
+                {favoriteProperties.length > 0 ? (
+                  <div className="space-y-4">
+                    {favoriteProperties.map((fav) => {
+                      const property = fav.property
+                      const images = property.images ? JSON.parse(property.images) : []
+                      const firstImage = images[0]
+
+                      return (
+                        <div key={fav.id} className="bg-white border border-gray-200 flex overflow-hidden hover:border-gray-400 transition-colors">
+                          <div className="w-32 h-24 bg-gray-100 flex-shrink-0">
+                            {firstImage ? (
+                              <img
+                                src={firstImage}
+                                alt={property.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 p-4 flex items-center justify-between">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                {getStatusBadge(property.status)}
+                                <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
+                                  {property.title}
+                                </h4>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-1">
+                                {property.price.toLocaleString()}万円
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {property.prefecture}{property.city}
+                                {property.buildYear && ` / ${property.buildYear}年築`}
+                                {property.layout && ` / ${property.layout}`}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Link
+                                href={`/properties/${property.id}`}
+                                className="px-3 py-1.5 text-xs border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                              >
+                                詳細
+                              </Link>
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(
+                                      `/api/favorites?propertyId=${property.id}&userId=${user?.id}`,
+                                      { method: "DELETE" }
+                                    )
+                                    if (response.ok) {
+                                      fetchFavoriteProperties()
+                                    }
+                                  } catch (error) {
+                                    console.error("Error removing favorite:", error)
+                                  }
+                                }}
+                                className="px-3 py-1.5 text-xs border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+                              >
+                                削除
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 border border-gray-200 p-12 text-center">
+                    <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <p className="text-gray-600 mb-4">お気に入り登録がありません</p>
+                    <Link
+                      href="/properties"
+                      className="inline-block px-6 py-3 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+                    >
+                      物件を探す
+                    </Link>
+                  </div>
+                )}
+              </>
             )}
 
             {/* クイックリンク */}
