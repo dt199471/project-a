@@ -132,6 +132,7 @@ export default function PropertyDetailPage() {
           <PropertySummaryCard
             property={property}
             buildYear={property.buildYear}
+            buildMonth={property.buildMonth}
             layout={property.layout}
             area={property.area}
           />
