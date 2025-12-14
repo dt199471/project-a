@@ -57,7 +57,13 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, price, address, city, prefecture, nearestStation, buildYear, buildMonth, layout, area, images } = body
+    const { 
+      title, description, price, address, city, prefecture, nearestStation, 
+      buildYear, buildMonth, layout, area, 
+      structure, floor, totalFloors, direction, parking, petAllowed,
+      managementFee, repairReserve, renovationHistory,
+      images 
+    } = body
 
     const updatedProperty = await prisma.property.update({
       where: { id },
@@ -73,6 +79,15 @@ export async function PUT(
         buildMonth: buildMonth !== undefined ? (buildMonth ? parseInt(buildMonth) : null) : (property as any).buildMonth,
         layout: layout !== undefined ? (layout || null) : (property as any).layout,
         area: area !== undefined ? (area ? parseFloat(area) : null) : (property as any).area,
+        structure: structure !== undefined ? (structure || null) : (property as any).structure,
+        floor: floor !== undefined ? (floor ? parseInt(floor) : null) : (property as any).floor,
+        totalFloors: totalFloors !== undefined ? (totalFloors ? parseInt(totalFloors) : null) : (property as any).totalFloors,
+        direction: direction !== undefined ? (direction || null) : (property as any).direction,
+        parking: parking !== undefined ? parking : (property as any).parking,
+        petAllowed: petAllowed !== undefined ? petAllowed : (property as any).petAllowed,
+        managementFee: managementFee !== undefined ? (managementFee ? parseInt(managementFee) : null) : (property as any).managementFee,
+        repairReserve: repairReserve !== undefined ? (repairReserve ? parseInt(repairReserve) : null) : (property as any).repairReserve,
+        renovationHistory: renovationHistory !== undefined ? (renovationHistory || null) : (property as any).renovationHistory,
         images: images ? JSON.stringify(images) : property.images,
       } as any,
       include: {

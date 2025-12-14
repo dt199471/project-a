@@ -13,6 +13,27 @@ const PREFECTURES = [
   "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ]
 
+const STRUCTURES = [
+  "木造",
+  "鉄骨造",
+  "鉄筋コンクリート造（RC）",
+  "鉄骨鉄筋コンクリート造（SRC）",
+  "軽量鉄骨造",
+  "その他"
+]
+
+const DIRECTIONS = [
+  "北", "北東", "東", "南東", "南", "南西", "西", "北西"
+]
+
+const LAYOUTS = [
+  "1R", "1K", "1DK", "1LDK",
+  "2K", "2DK", "2LDK",
+  "3K", "3DK", "3LDK",
+  "4K", "4DK", "4LDK",
+  "5K以上"
+]
+
 interface PropertyFormProps {
   property?: {
     id: string
@@ -27,6 +48,15 @@ interface PropertyFormProps {
     buildMonth?: number | null
     layout?: string | null
     area?: number | null
+    structure?: string | null
+    floor?: number | null
+    totalFloors?: number | null
+    direction?: string | null
+    parking?: boolean
+    petAllowed?: boolean
+    managementFee?: number | null
+    repairReserve?: number | null
+    renovationHistory?: string | null
     images: string
   }
 }
@@ -46,6 +76,15 @@ export default function PropertyForm({ property }: PropertyFormProps) {
     buildMonth: property?.buildMonth?.toString() || "",
     layout: property?.layout || "",
     area: property?.area?.toString() || "",
+    structure: property?.structure || "",
+    floor: property?.floor?.toString() || "",
+    totalFloors: property?.totalFloors?.toString() || "",
+    direction: property?.direction || "",
+    parking: property?.parking || false,
+    petAllowed: property?.petAllowed || false,
+    managementFee: property?.managementFee?.toString() || "",
+    repairReserve: property?.repairReserve?.toString() || "",
+    renovationHistory: property?.renovationHistory || "",
     images: property?.images ? JSON.parse(property.images) : [] as string[],
   })
 
@@ -54,10 +93,18 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value, type } = e.target
+    if (type === 'checkbox') {
+      setFormData({
+        ...formData,
+        [name]: (e.target as HTMLInputElement).checked,
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      })
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,14 +333,17 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             <label className="block text-sm font-medium text-gray-900 mb-2">
               間取り
             </label>
-            <input
-              type="text"
+            <select
               name="layout"
               value={formData.layout}
               onChange={handleChange}
-              placeholder="例: 3LDK"
-              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
-            />
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors bg-white"
+            >
+              <option value="">選択してください</option>
+              {LAYOUTS.map((l) => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -309,6 +359,149 @@ export default function PropertyForm({ property }: PropertyFormProps) {
               min="0"
               step="0.01"
               className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* 建物情報 */}
+        <div className="border-t border-gray-200 pt-8">
+          <h3 className="text-lg font-medium text-gray-900 mb-6">建物情報</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                建物構造
+              </label>
+              <select
+                name="structure"
+                value={formData.structure}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors bg-white"
+              >
+                <option value="">選択してください</option>
+                {STRUCTURES.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                向き
+              </label>
+              <select
+                name="direction"
+                value={formData.direction}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors bg-white"
+              >
+                <option value="">選択してください</option>
+                {DIRECTIONS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                階数
+              </label>
+              <input
+                type="number"
+                name="floor"
+                value={formData.floor}
+                onChange={handleChange}
+                placeholder="例: 5"
+                min="1"
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                総階数
+              </label>
+              <input
+                type="number"
+                name="totalFloors"
+                value={formData.totalFloors}
+                onChange={handleChange}
+                placeholder="例: 15"
+                min="1"
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                管理費（円/月）
+              </label>
+              <input
+                type="number"
+                name="managementFee"
+                value={formData.managementFee}
+                onChange={handleChange}
+                placeholder="例: 15000"
+                min="0"
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                修繕積立金（円/月）
+              </label>
+              <input
+                type="number"
+                name="repairReserve"
+                value={formData.repairReserve}
+                onChange={handleChange}
+                placeholder="例: 10000"
+                min="0"
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-6 mb-6">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="parking"
+                checked={formData.parking}
+                onChange={handleChange}
+                className="w-5 h-5 border-gray-300 text-gray-900 focus:ring-gray-900"
+              />
+              <span className="text-sm text-gray-900">駐車場あり</span>
+            </label>
+
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="petAllowed"
+                checked={formData.petAllowed}
+                onChange={handleChange}
+                className="w-5 h-5 border-gray-300 text-gray-900 focus:ring-gray-900"
+              />
+              <span className="text-sm text-gray-900">ペット可</span>
+            </label>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              リフォーム履歴
+            </label>
+            <textarea
+              name="renovationHistory"
+              value={formData.renovationHistory}
+              onChange={handleChange}
+              rows={3}
+              placeholder="例: 2020年 キッチン・浴室リフォーム済み"
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors resize-none"
             />
           </div>
         </div>

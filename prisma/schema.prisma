@@ -37,6 +37,16 @@ model Property {
   buildMonth    Int?     // 築月
   layout        String?   // 間取り（例: 3LDK）
   area          Float?    // 専有面積（㎡）
+  structure     String?   // 建物構造（木造、RC、SRC等）
+  floor         Int?      // 階数
+  totalFloors   Int?      // 総階数
+  direction     String?   // 向き（南向き等）
+  parking       Boolean   @default(false) // 駐車場有無
+  petAllowed    Boolean   @default(false) // ペット可否
+  managementFee Int?      // 管理費（円/月）
+  repairReserve Int?      // 修繕積立金（円/月）
+  renovationHistory String? // リフォーム履歴
+  status        String    @default("ACTIVE") // ACTIVE, NEGOTIATING, SOLD, DRAFT
   images        String   // JSON array of image URLs stored as string
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)

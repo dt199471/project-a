@@ -10,6 +10,11 @@ export async function GET(request: NextRequest) {
     const city = searchParams.get("city")
     const prefecture = searchParams.get("prefecture")
     const nearestStation = searchParams.get("nearestStation")
+    const layout = searchParams.get("layout")
+    const minArea = searchParams.get("minArea")
+    const maxArea = searchParams.get("maxArea")
+    const minBuildYear = searchParams.get("minBuildYear")
+    const maxBuildYear = searchParams.get("maxBuildYear")
     const sortBy = searchParams.get("sortBy") || "createdAt"
     const sortOrder = searchParams.get("sortOrder") || "desc"
 
@@ -43,6 +48,26 @@ export async function GET(request: NextRequest) {
       where.prefecture = prefecture
     }
 
+    if (layout) {
+      where.layout = layout
+    }
+
+    if (minArea) {
+      where.area = { ...where.area, gte: parseFloat(minArea) }
+    }
+
+    if (maxArea) {
+      where.area = { ...where.area, lte: parseFloat(maxArea) }
+    }
+
+    if (minBuildYear) {
+      where.buildYear = { ...where.buildYear, gte: parseInt(minBuildYear) }
+    }
+
+    if (maxBuildYear) {
+      where.buildYear = { ...where.buildYear, lte: parseInt(maxBuildYear) }
+    }
+
     const orderBy: any = {}
     orderBy[sortBy] = sortOrder
 
@@ -73,7 +98,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, description, price, address, city, prefecture, nearestStation, buildYear, buildMonth, layout, area, images, userId } = body
+    const { 
+      title, description, price, address, city, prefecture, nearestStation, 
+      buildYear, buildMonth, layout, area, 
+      structure, floor, totalFloors, direction, parking, petAllowed,
+      managementFee, repairReserve, renovationHistory,
+      images, userId 
+    } = body
 
 
     if (!title || !description || !price || !address || !city || !prefecture) {
@@ -113,6 +144,15 @@ export async function POST(request: NextRequest) {
         buildMonth: buildMonth ? parseInt(buildMonth) : null,
         layout: layout || null,
         area: area ? parseFloat(area) : null,
+        structure: structure || null,
+        floor: floor ? parseInt(floor) : null,
+        totalFloors: totalFloors ? parseInt(totalFloors) : null,
+        direction: direction || null,
+        parking: parking || false,
+        petAllowed: petAllowed || false,
+        managementFee: managementFee ? parseInt(managementFee) : null,
+        repairReserve: repairReserve ? parseInt(repairReserve) : null,
+        renovationHistory: renovationHistory || null,
         images: JSON.stringify(images || []),
         userId: finalUserId,
       } as any,

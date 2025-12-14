@@ -28,6 +28,16 @@ interface Property {
   buildMonth?: number | null
   layout?: string | null
   area?: number | null
+  structure?: string | null
+  floor?: number | null
+  totalFloors?: number | null
+  direction?: string | null
+  parking?: boolean
+  petAllowed?: boolean
+  managementFee?: number | null
+  repairReserve?: number | null
+  renovationHistory?: string | null
+  status?: string
 }
 
 export default function PropertyDetailPage() {
@@ -167,7 +177,7 @@ export default function PropertyDetailPage() {
         {/* PROPERTY DETAIL Section */}
         <div className="mb-12 border-t border-gray-200 pt-12">
           <p className="text-sm tracking-widest uppercase mb-6 text-gray-500">PROPERTY DETAIL</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex border-b border-gray-200 pb-4">
               <dt className="w-40 text-sm text-gray-600 font-light">販売価格</dt>
               <dd className="flex-1 text-sm text-gray-900 font-light">
@@ -184,7 +194,7 @@ export default function PropertyDetailPage() {
             )}
             {(property.layout || property.area) && (
               <div className="flex border-b border-gray-200 pb-4">
-                <dt className="w-40 text-sm text-gray-600 font-light">間取り</dt>
+                <dt className="w-40 text-sm text-gray-600 font-light">間取り / 専有面積</dt>
                 <dd className="flex-1 text-sm text-gray-900 font-light">
                   {property.layout || '-'}
                   {property.area && ` / ${property.area}㎡`}
@@ -205,12 +215,75 @@ export default function PropertyDetailPage() {
                 </dd>
               </div>
             )}
+            {property.structure && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">建物構造</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.structure}
+                </dd>
+              </div>
+            )}
+            {(property.floor || property.totalFloors) && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">階数</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.floor ? `${property.floor}階` : '-'}
+                  {property.totalFloors && ` / ${property.totalFloors}階建`}
+                </dd>
+              </div>
+            )}
+            {property.direction && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">向き</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.direction}向き
+                </dd>
+              </div>
+            )}
+            {(property.managementFee !== null && property.managementFee !== undefined) && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">管理費</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.managementFee.toLocaleString()}円/月
+                </dd>
+              </div>
+            )}
+            {(property.repairReserve !== null && property.repairReserve !== undefined) && (
+              <div className="flex border-b border-gray-200 pb-4">
+                <dt className="w-40 text-sm text-gray-600 font-light">修繕積立金</dt>
+                <dd className="flex-1 text-sm text-gray-900 font-light">
+                  {property.repairReserve.toLocaleString()}円/月
+                </dd>
+              </div>
+            )}
+            <div className="flex border-b border-gray-200 pb-4">
+              <dt className="w-40 text-sm text-gray-600 font-light">駐車場</dt>
+              <dd className="flex-1 text-sm text-gray-900 font-light">
+                {property.parking ? 'あり' : 'なし'}
+              </dd>
+            </div>
+            <div className="flex border-b border-gray-200 pb-4">
+              <dt className="w-40 text-sm text-gray-600 font-light">ペット</dt>
+              <dd className="flex-1 text-sm text-gray-900 font-light">
+                {property.petAllowed ? '可' : '不可'}
+              </dd>
+            </div>
             <div className="flex border-b border-gray-200 pb-4">
               <dt className="w-40 text-sm text-gray-600 font-light">物件種別</dt>
               <dd className="flex-1 text-sm text-gray-900 font-light">マンション</dd>
             </div>
           </div>
         </div>
+
+        {/* リフォーム履歴 */}
+        {property.renovationHistory && (
+          <div className="mb-12 border-t border-gray-200 pt-12">
+            <h2 className="text-xl font-light text-gray-900 mb-6">リフォーム履歴</h2>
+            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+              {property.renovationHistory}
+            </p>
+          </div>
+        )}
 
         {/* Nearest Station */}
         {property.nearestStation && (

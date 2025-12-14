@@ -34,6 +34,11 @@ export default function PropertiesPage() {
     city: "",
     prefecture: "",
     nearestStation: "",
+    layout: "",
+    minArea: "",
+    maxArea: "",
+    minBuildYear: "",
+    maxBuildYear: "",
     sortBy: "createdAt",
     sortOrder: "desc",
   })
@@ -52,6 +57,11 @@ export default function PropertiesPage() {
       if (filters.city) params.append("city", filters.city)
       if (filters.prefecture) params.append("prefecture", filters.prefecture)
       if (filters.nearestStation) params.append("nearestStation", filters.nearestStation)
+      if (filters.layout) params.append("layout", filters.layout)
+      if (filters.minArea) params.append("minArea", filters.minArea)
+      if (filters.maxArea) params.append("maxArea", filters.maxArea)
+      if (filters.minBuildYear) params.append("minBuildYear", filters.minBuildYear)
+      if (filters.maxBuildYear) params.append("maxBuildYear", filters.maxBuildYear)
       params.append("sortBy", filters.sortBy)
       params.append("sortOrder", filters.sortOrder)
 
