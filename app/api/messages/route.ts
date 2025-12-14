@@ -109,6 +109,7 @@ export async function POST(request: NextRequest) {
         update: {},
         create: {
           id: finalSenderId,
+          loginId: `user_${finalSenderId}`,
           name: "デフォルトユーザー",
           email: null,
         },
@@ -122,6 +123,7 @@ export async function POST(request: NextRequest) {
         update: {},
         create: {
           id: receiverId,
+          loginId: `user_${receiverId}`,
           name: "受信者",
           email: null,
         },

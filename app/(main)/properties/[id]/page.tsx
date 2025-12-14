@@ -124,9 +124,6 @@ export default function PropertyDetailPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <p className="text-sm tracking-widest uppercase text-gray-500">PROPERTY DETAIL</p>
-            {user && !isOwner && (
-              <FavoriteButton propertyId={property.id} />
-            )}
           </div>
         </div>
       </div>
@@ -181,10 +178,6 @@ export default function PropertyDetailPage() {
         <div className="mb-12 border-t border-gray-200 pt-12">
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm tracking-widest uppercase text-gray-500">PROPERTY DETAIL</p>
-            {/* お気に入りボタン（PROPERTY DETAIL内） */}
-            {user && !isOwner && (
-              <FavoriteButton propertyId={property.id} />
-            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex border-b border-gray-200 pb-4">

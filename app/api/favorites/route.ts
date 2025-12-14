@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
         update: {},
         create: {
           id: finalUserId,
+          loginId: `user_${finalUserId}`,
           name: "デフォルトユーザー",
           email: null,
         },
