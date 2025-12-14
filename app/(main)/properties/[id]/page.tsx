@@ -334,7 +334,7 @@ export default function PropertyDetailPage() {
             </button>
           </div>
         ) : (
-          currentUserId && (
+          user && (
             <div className="border-t border-gray-200 pt-12">
               <h2 className="text-xl font-light text-gray-900 mb-6">お問い合わせ</h2>
               <PropertyMessageForm
