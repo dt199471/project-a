@@ -57,7 +57,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, price, address, city, prefecture, nearestStation, images } = body
+    const { title, description, price, address, city, prefecture, nearestStation, buildYear, buildMonth, layout, area, images } = body
 
     const updatedProperty = await prisma.property.update({
       where: { id },
@@ -69,6 +69,10 @@ export async function PUT(
         city: city || property.city,
         prefecture: prefecture || property.prefecture,
         nearestStation: nearestStation !== undefined ? nearestStation : (property as any).nearestStation,
+        buildYear: buildYear !== undefined ? (buildYear ? parseInt(buildYear) : null) : (property as any).buildYear,
+        buildMonth: buildMonth !== undefined ? (buildMonth ? parseInt(buildMonth) : null) : (property as any).buildMonth,
+        layout: layout !== undefined ? (layout || null) : (property as any).layout,
+        area: area !== undefined ? (area ? parseFloat(area) : null) : (property as any).area,
         images: images ? JSON.stringify(images) : property.images,
       } as any,
       include: {

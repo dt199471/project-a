@@ -33,6 +33,10 @@ model Property {
   city          String
   prefecture    String
   nearestStation String? // 最寄り駅
+  buildYear     Int?     // 築年
+  buildMonth    Int?     // 築月
+  layout        String?   // 間取り（例: 3LDK）
+  area          Float?    // 専有面積（㎡）
   images        String   // JSON array of image URLs stored as string
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)

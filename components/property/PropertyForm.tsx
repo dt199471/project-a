@@ -23,6 +23,10 @@ interface PropertyFormProps {
     city: string
     prefecture: string
     nearestStation?: string | null
+    buildYear?: number | null
+    buildMonth?: number | null
+    layout?: string | null
+    area?: number | null
     images: string
   }
 }
@@ -38,6 +42,10 @@ export default function PropertyForm({ property }: PropertyFormProps) {
     city: property?.city || "",
     prefecture: property?.prefecture || "",
     nearestStation: (property as any)?.nearestStation || "",
+    buildYear: property?.buildYear?.toString() || "",
+    buildMonth: property?.buildMonth?.toString() || "",
+    layout: property?.layout || "",
+    area: property?.area?.toString() || "",
     images: property?.images ? JSON.parse(property.images) : [] as string[],
   })
 
@@ -119,13 +127,10 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 md:p-8 border border-gray-100">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {property ? "物件情報を編集" : "物件を登録"}
-      </h2>
-      <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white border border-gray-200">
+      <div className="space-y-8">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             タイトル <span className="text-red-500">*</span>
           </label>
           <input
@@ -134,12 +139,13 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.title}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="例: 渋谷駅徒歩5分 リノベーション済み 2LDK"
+            className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             説明 <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -147,13 +153,14 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.description}
             onChange={handleChange}
             required
-            rows={6}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
+            rows={8}
+            placeholder="物件の特徴や魅力を具体的にご記入ください"
+            className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors resize-none"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             価格（円） <span className="text-red-500">*</span>
           </label>
           <input
@@ -163,46 +170,53 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             onChange={handleChange}
             required
             min="0"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="30000000"
+            className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
           />
+          <p className="mt-2 text-sm text-gray-500">
+            AI査定を参考に適正価格を設定することをおすすめします
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              都道府県 <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="prefecture"
+              value={formData.prefecture}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors bg-white"
+            >
+              <option value="">選択してください</option>
+              {PREFECTURES.map((pref) => (
+                <option key={pref} value={pref}>
+                  {pref}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              市区町村 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              required
+              placeholder="例: 渋谷区"
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            都道府県 <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="prefecture"
-            value={formData.prefecture}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
-          >
-            <option value="">選択してください</option>
-            {PREFECTURES.map((pref) => (
-              <option key={pref} value={pref}>
-                {pref}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            市区町村 <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             住所 <span className="text-red-500">*</span>
           </label>
           <input
@@ -211,12 +225,13 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             value={formData.address}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="例: 神南1-2-3"
+            className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             最寄り駅
           </label>
           <input
@@ -224,13 +239,82 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             name="nearestStation"
             value={formData.nearestStation}
             onChange={handleChange}
-            placeholder="例: 東京駅、新宿駅"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="例: JR山手線 渋谷駅 徒歩5分"
+            className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
           />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              築年
+            </label>
+            <input
+              type="number"
+              name="buildYear"
+              value={formData.buildYear}
+              onChange={handleChange}
+              placeholder="例: 2015"
+              min="1900"
+              max={new Date().getFullYear()}
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              築月
+            </label>
+            <select
+              name="buildMonth"
+              value={formData.buildMonth}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors bg-white"
+            >
+              <option value="">選択してください</option>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                <option key={month} value={month}>
+                  {month}月
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              間取り
+            </label>
+            <input
+              type="text"
+              name="layout"
+              value={formData.layout}
+              onChange={handleChange}
+              placeholder="例: 3LDK"
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              専有面積（㎡）
+            </label>
+            <input
+              type="number"
+              name="area"
+              value={formData.area}
+              onChange={handleChange}
+              placeholder="例: 60.5"
+              min="0"
+              step="0.01"
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors"
+            />
+          </div>
+        </div>
+
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             画像
           </label>
           <input
@@ -238,8 +322,11 @@ export default function PropertyForm({ property }: PropertyFormProps) {
             accept="image/*"
             multiple
             onChange={handleImageChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gray-900 transition-colors file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-medium file:bg-gray-900 file:text-white hover:file:bg-gray-800 file:cursor-pointer"
           />
+          <p className="mt-2 text-sm text-gray-500">
+            明るく清潔感のある写真を複数枚登録すると、購入希望者の目に留まりやすくなります
+          </p>
           {formData.images.length > 0 && (
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
               {formData.images.map((img: string, index: number) => (
@@ -247,12 +334,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
                   <img
                     src={img}
                     alt={`Preview ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                    className="w-full h-32 object-cover border border-gray-200"
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm hover:bg-red-600 transition-colors shadow-md"
+                    className="absolute top-2 right-2 bg-gray-900 text-white w-6 h-6 flex items-center justify-center text-sm hover:bg-gray-800 transition-colors"
                   >
                     ×
                   </button>
@@ -262,18 +349,18 @@ export default function PropertyForm({ property }: PropertyFormProps) {
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-200">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all shadow-md hover:shadow-lg"
+            className="flex-1 px-8 py-3 bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
           >
             {loading ? "送信中..." : property ? "更新する" : "登録する"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold transition-colors"
+            className="px-8 py-3 border border-gray-300 text-gray-900 hover:bg-gray-50 font-medium transition-colors"
           >
             キャンセル
           </button>

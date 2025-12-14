@@ -7,19 +7,35 @@ interface PropertySummaryCardProps {
     address: string
     images: string
   }
-  buildYear?: number
-  layout?: string
-  area?: number
+  buildYear?: number | null
+  buildMonth?: number | null
+  layout?: string | null
+  area?: number | null
 }
 
-export default function PropertySummaryCard({ property, buildYear, layout, area }: PropertySummaryCardProps) {
+export default function PropertySummaryCard({ property, buildYear, buildMonth, layout, area }: PropertySummaryCardProps) {
   const images = property.images ? JSON.parse(property.images) : []
   const firstImage = images[0]
 
-  // 築年数を計算
-  const currentYear = new Date().getFullYear()
-  const age = buildYear ? currentYear - buildYear : null
-  const buildDate = buildYear ? `${buildYear}年${age ? `（${age}年${age > 0 ? Math.floor(age / 12) + 'ヶ月' : ''}）` : ''}` : null
+  // 築年月を計算
+  let buildDate = null
+  if (buildYear) {
+    const currentYear = new Date().getFullYear()
+    const currentMonth = new Date().getMonth() + 1
+    let years = currentYear - buildYear
+    let months = 0
+    
+    if (buildMonth) {
+      months = currentMonth - buildMonth
+      if (months < 0) {
+        years -= 1
+        months += 12
+      }
+      buildDate = `${buildYear}年${buildMonth}月（${years}年${months > 0 ? `${months}ヶ月` : ''}）`
+    } else {
+      buildDate = `${buildYear}年築（${years}年）`
+    }
+  }
 
   return (
     <div className="bg-white border border-gray-200">

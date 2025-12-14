@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, description, price, address, city, prefecture, nearestStation, images, userId } = body
+    const { title, description, price, address, city, prefecture, nearestStation, buildYear, buildMonth, layout, area, images, userId } = body
 
 
     if (!title || !description || !price || !address || !city || !prefecture) {
@@ -109,6 +109,10 @@ export async function POST(request: NextRequest) {
         city,
         prefecture,
         nearestStation: nearestStation || null,
+        buildYear: buildYear ? parseInt(buildYear) : null,
+        buildMonth: buildMonth ? parseInt(buildMonth) : null,
+        layout: layout || null,
+        area: area ? parseFloat(area) : null,
         images: JSON.stringify(images || []),
         userId: finalUserId,
       } as any,

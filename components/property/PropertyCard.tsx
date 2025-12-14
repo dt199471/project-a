@@ -10,6 +10,10 @@ interface PropertyCardProps {
     city: string
     prefecture: string
     nearestStation?: string | null
+    buildYear?: number | null
+    buildMonth?: number | null
+    layout?: string | null
+    area?: number | null
     images: string
     user: {
       name: string | null
@@ -22,46 +26,66 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const images = property.images ? JSON.parse(property.images) : []
   const firstImage = images[0]
 
-  // 築年数を計算（createdAtから）
-  const createdAt = new Date()
-  const buildYear = createdAt.getFullYear() - Math.floor(Math.random() * 30 + 5) // モック: 5-35年前
-  const buildDate = `${buildYear}年築`
-  
-  // 間取りをdescriptionから抽出（モック: 2LDK, 3LDKなど）
-  const layoutMatch = property.description.match(/(\d+LDK|\d+K|\d+DK)/i)
-  const layout = layoutMatch ? layoutMatch[1] : null
+  // 築年月を計算
+  let buildDate = null
+  if (property.buildYear) {
+    const currentYear = new Date().getFullYear()
+    const currentMonth = new Date().getMonth() + 1
+    let years = currentYear - property.buildYear
+    let months = 0
+    
+    if (property.buildMonth) {
+      months = currentMonth - property.buildMonth
+      if (months < 0) {
+        years -= 1
+        months += 12
+      }
+      buildDate = `${property.buildYear}年${property.buildMonth}月（${years}年${months > 0 ? `${months}ヶ月` : ''}）`
+    } else {
+      buildDate = `${property.buildYear}年築（${years}年）`
+    }
+  }
+
+  // 間取りと面積の表示
+  const layoutDisplay = property.layout 
+    ? property.area 
+      ? `${property.layout} / ${property.area}㎡${property.area * 1.8 ? `〜${(property.area * 1.8).toFixed(2)}㎡` : ''}`
+      : property.layout
+    : null
 
   return (
     <Link href={`/properties/${property.id}`}>
-      <div className="group bg-white border border-gray-200 hover:border-gray-900 transition-colors overflow-hidden">
-        <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
+      <div className="group bg-white border border-gray-200 hover:border-gray-900 transition-all shadow-md hover:shadow-xl overflow-hidden">
+        <div className="relative h-80 w-full bg-gray-100 overflow-hidden">
           {firstImage ? (
             <img
               src={firstImage}
               alt={property.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           )}
         </div>
-        <div className="p-4">
-          <h3 className="text-base font-medium text-gray-900 mb-2 line-clamp-2">
+        <div className="p-6">
+          <h3 className="text-lg font-light text-gray-900 mb-4 leading-relaxed line-clamp-2">
             {property.title}
           </h3>
-          <p className="text-lg font-light text-gray-900 mb-2">
-            ¥{property.price.toLocaleString()}
+          <p className="text-xl font-light text-gray-900 mb-3">
+            {property.price.toLocaleString()}万円
           </p>
-          <p className="text-xs text-gray-600 mb-1">
-            {buildDate}
-          </p>
-          {layout && (
-            <p className="text-xs text-gray-600 mb-2">
-              {layout}
+          {buildDate && (
+            <p className="text-sm text-gray-600 mb-2">
+              {buildDate}
+            </p>
+          )}
+          {layoutDisplay && (
+            <p className="text-sm text-gray-600">
+              {layoutDisplay}
             </p>
           )}
         </div>
