@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { propertyId, userId } = body
 
+
     if (!propertyId) {
       return NextResponse.json(
         { error: "物件IDが必要です" },
@@ -48,9 +49,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const finalUserId = userId || "default-user"
+    
+    // Check if user exists, create if not
+    let userExists = await prisma.user.findUnique({where:{id:finalUserId}}).catch(()=>null);
+    
+    if (!userExists) {
+      userExists = await prisma.user.upsert({
+        where: { id: finalUserId },
+        update: {},
+        create: {
+          id: finalUserId,
+          name: "デフォルトユーザー",
+          email: null,
+        },
+      })
+    }
+
     const favorite = await prisma.favorite.create({
       data: {
-        userId: userId || "default-user",
+        userId: finalUserId,
         propertyId,
       },
       include: {
@@ -67,6 +85,7 @@ export async function POST(request: NextRequest) {
         },
       },
     })
+
 
     return NextResponse.json(favorite, { status: 201 })
   } catch (error: any) {
@@ -113,6 +132,7 @@ export async function DELETE(request: NextRequest) {
     )
   }
 }
+
 
 
 

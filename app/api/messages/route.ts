@@ -88,6 +88,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { propertyId, receiverId, content, senderId } = body
 
+
     if (!propertyId || !receiverId || !content) {
       return NextResponse.json(
         { error: "必須項目が不足しています" },
@@ -95,11 +96,43 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const finalSenderId = senderId || "default-user"
+    
+    // Check if users exist, create if not
+    let senderExists = await prisma.user.findUnique({where:{id:finalSenderId}}).catch(()=>null);
+    let receiverExists = await prisma.user.findUnique({where:{id:receiverId}}).catch(()=>null);
+
+    // Create default sender if it doesn't exist
+    if (!senderExists) {
+      senderExists = await prisma.user.upsert({
+        where: { id: finalSenderId },
+        update: {},
+        create: {
+          id: finalSenderId,
+          name: "デフォルトユーザー",
+          email: null,
+        },
+      })
+    }
+
+    // Ensure receiver exists
+    if (!receiverExists) {
+      receiverExists = await prisma.user.upsert({
+        where: { id: receiverId },
+        update: {},
+        create: {
+          id: receiverId,
+          name: "受信者",
+          email: null,
+        },
+      })
+    }
+
     const message = await prisma.message.create({
       data: {
         content,
         propertyId,
-        senderId: senderId || "default-user",
+        senderId: finalSenderId,
         receiverId,
       },
       include: {
@@ -126,6 +159,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
+
     return NextResponse.json(message, { status: 201 })
   } catch (error) {
     console.error("Error creating message:", error)
@@ -135,6 +169,7 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
 
 
 

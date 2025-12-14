@@ -1,22 +1,27 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
 
 interface FavoriteButtonProps {
   propertyId: string
 }
 
 export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
-  const { data: session } = useSession()
   const [isFavorite, setIsFavorite] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (session) {
+    // Get current user from localStorage
+    const userId = localStorage.getItem('userId')
+    setCurrentUserId(userId)
+  }, [])
+
+  useEffect(() => {
+    if (currentUserId) {
       checkFavorite()
     }
-  }, [session, propertyId])
+  }, [currentUserId, propertyId])
 
   const checkFavorite = async () => {
     try {
@@ -31,7 +36,7 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
   }
 
   const toggleFavorite = async () => {
-    if (!session) return
+    if (!currentUserId) return
 
     setLoading(true)
     try {
@@ -47,7 +52,7 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
         const response = await fetch("/api/favorites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ propertyId }),
+          body: JSON.stringify({ propertyId, userId: currentUserId }),
         })
         if (response.ok) {
           setIsFavorite(true)
@@ -60,7 +65,7 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
     }
   }
 
-  if (!session) return null
+  if (!currentUserId) return null
 
   return (
     <button

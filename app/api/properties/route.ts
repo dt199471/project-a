@@ -75,11 +75,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { title, description, price, address, city, prefecture, nearestStation, images, userId } = body
 
+
     if (!title || !description || !price || !address || !city || !prefecture) {
       return NextResponse.json(
         { error: "必須項目が不足しています" },
         { status: 400 }
       )
+    }
+
+    const finalUserId = userId || "default-user"
+    
+    // Check if user exists, create if not
+    let userExists = await prisma.user.findUnique({where:{id:finalUserId}}).catch(()=>null);
+    
+    if (!userExists) {
+      userExists = await prisma.user.upsert({
+        where: { id: finalUserId },
+        update: {},
+        create: {
+          id: finalUserId,
+          name: "デフォルトユーザー",
+          email: null,
+        },
+      })
     }
 
     const property = await prisma.property.create({
@@ -92,7 +110,7 @@ export async function POST(request: NextRequest) {
         prefecture,
         nearestStation: nearestStation || null,
         images: JSON.stringify(images || []),
-        userId: userId || "default-user",
+        userId: finalUserId,
       } as any,
       include: {
         user: {
@@ -104,6 +122,7 @@ export async function POST(request: NextRequest) {
         },
       },
     })
+
 
     return NextResponse.json(property, { status: 201 })
   } catch (error) {

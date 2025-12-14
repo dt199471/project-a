@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
 import PropertyMessageForm from "@/components/property/PropertyMessageForm"
 import FavoriteButton from "@/components/property/FavoriteButton"
 
@@ -29,16 +28,22 @@ interface Property {
 export default function PropertyDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { data: session } = useSession()
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Get current user from localStorage
+    const userId = localStorage.getItem('userId')
+    setCurrentUserId(userId)
+  }, [])
 
   useEffect(() => {
     if (params.id) {
       fetchProperty()
     }
-  }, [params.id, session])
+  }, [params.id, currentUserId])
 
   const fetchProperty = async () => {
     try {
@@ -46,7 +51,7 @@ export default function PropertyDetailPage() {
       if (response.ok) {
         const data = await response.json()
         setProperty(data)
-        if (session?.user?.id && data.userId === session.user.id) {
+        if (currentUserId && data.userId === currentUserId) {
           setIsOwner(true)
         }
       } else {
@@ -148,7 +153,7 @@ export default function PropertyDetailPage() {
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
                   {property.title}
                 </h1>
-                {session && !isOwner && (
+                {currentUserId && !isOwner && (
                   <FavoriteButton propertyId={property.id} />
                 )}
               </div>
@@ -205,7 +210,7 @@ export default function PropertyDetailPage() {
                   </button>
                 </div>
               ) : (
-                session && (
+                currentUserId && (
                   <PropertyMessageForm
                     propertyId={property.id}
                     receiverId={property.userId}
