@@ -171,7 +171,7 @@ export default function ChatBot() {
               </div>
               <div className="flex-1">
                 <h3 className="font-medium text-lg">AIアシスタント</h3>
-                <p className="text-xs text-gray-400">powered by GPT-4o mini</p>
+                <p className="text-xs text-gray-400">powered by GPT-5 nano</p>
               </div>
               <button
                 onClick={clearChat}

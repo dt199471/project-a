@@ -52,6 +52,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { messages } = body as { messages: ChatMessage[] }
 
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: 'debug-session',
+        runId: 'chat-post-initial',
+        hypothesisId: 'H1',
+        location: 'app/api/chat/route.ts:55',
+        message: 'POST /api/chat received',
+        data: { hasMessages: !!messages, messageCount: Array.isArray(messages) ? messages.length : null },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
+
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
         { error: "メッセージが必要です" },
@@ -59,9 +75,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // OpenAI APIにリクエスト
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: 'debug-session',
+        runId: 'chat-post-initial',
+        hypothesisId: 'H2',
+        location: 'app/api/chat/route.ts:63',
+        message: 'Calling OpenAI chat.completions.create',
+        data: {},
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
+
+    // OpenAI APIにリクエスト（GPT-5ナノを使用）
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // コスト効率の良いモデル
+      model: "gpt-5-nano", // GPT-5ナノモデル
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         ...messages.map((m) => ({
@@ -69,11 +101,32 @@ export async function POST(request: NextRequest) {
           content: m.content,
         })),
       ],
-      max_tokens: 500,
-      temperature: 0.7,
+      max_completion_tokens: 2000, // GPT-5-nanoではmax_completion_tokensを使用（推論トークン+出力トークンの合計）
     })
 
+    console.log("Chat completion raw response:", JSON.stringify(completion, null, 2))
+
     const assistantMessage = completion.choices[0]?.message?.content
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: 'debug-session',
+        runId: 'chat-post-initial',
+        hypothesisId: 'H3',
+        location: 'app/api/chat/route.ts:77',
+        message: 'Assistant message extracted',
+        data: {
+          hasAssistantMessage: !!assistantMessage,
+          assistantMessagePreview: typeof assistantMessage === 'string' ? assistantMessage.slice(0, 50) : null,
+          choiceCount: Array.isArray(completion.choices) ? completion.choices.length : null,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
 
     if (!assistantMessage) {
       return NextResponse.json(
@@ -87,6 +140,13 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error("Chat API error:", error)
+    console.error("Error details:", {
+      message: error?.message,
+      status: error?.status,
+      code: error?.code,
+      type: error?.type,
+      response: error?.response,
+    })
 
     // OpenAI APIエラーの詳細を返す
     if (error?.status === 401) {
@@ -103,10 +163,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // モデルが見つからない場合（404）
+    if (error?.status === 404 || error?.code === "model_not_found") {
+      return NextResponse.json(
+        { error: `モデル "gpt-5-nano" が見つかりません。APIキーにこのモデルへのアクセス権限があるか確認してください。` },
+        { status: 404 }
+      )
+    }
+
+    // その他のエラー（詳細を返す）
+    const errorMessage = error?.message || "チャットの処理に失敗しました"
     return NextResponse.json(
-      { error: "チャットの処理に失敗しました" },
-      { status: 500 }
+      { 
+        error: errorMessage,
+        details: error?.code ? `エラーコード: ${error.code}` : undefined
+      },
+      { status: error?.status || 500 }
     )
   }
 }
+
 
