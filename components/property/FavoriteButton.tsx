@@ -20,17 +20,11 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
   }, [user?.id, propertyId])
 
   const checkFavorite = async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1',location:'components/property/FavoriteButton.tsx:checkFavorite',message:'checkFavorite start',data:{propertyId,userId: user?.id ?? null,authLoading},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     try {
       const response = await fetch(`/api/favorites/check?propertyId=${propertyId}&userId=${user?.id}`)
       if (response.ok) {
         const data = await response.json()
         setIsFavorite(data.isFavorite)
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H1',location:'components/property/FavoriteButton.tsx:checkFavorite',message:'checkFavorite response',data:{propertyId,userId: user?.id ?? null,status: response.status,isFavorite: data?.isFavorite ?? null},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
       }
     } catch (error) {
       console.error("Error checking favorite:", error)
@@ -45,9 +39,6 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
 
     // 楽観的更新: 即座にUIを更新
     const previousState = isFavorite
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H2',location:'components/property/FavoriteButton.tsx:toggleFavorite',message:'toggle start (optimistic)',data:{propertyId,userId:user.id,previousState,loading,authLoading},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     setIsFavorite(!isFavorite)
     setLoading(true)
 
@@ -57,9 +48,6 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
           `/api/favorites?propertyId=${propertyId}&userId=${user.id}`,
           { method: "DELETE" }
         )
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'components/property/FavoriteButton.tsx:toggleFavorite',message:'toggle DELETE result',data:{propertyId,userId:user.id,status:response.status,ok:response.ok},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         if (!response.ok) {
           // エラー時は元に戻す
           setIsFavorite(previousState)
@@ -70,9 +58,6 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ propertyId, userId: user.id }),
         })
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'components/property/FavoriteButton.tsx:toggleFavorite',message:'toggle POST result',data:{propertyId,userId:user.id,status:response.status,ok:response.ok},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         if (!response.ok) {
           // エラー時は元に戻す
           setIsFavorite(previousState)

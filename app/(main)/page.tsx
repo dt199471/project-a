@@ -69,9 +69,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Search Section */}
+      {/* Search Section - 購入したい方 */}
       <div className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">買いたい方へ</p>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Link
               href="/properties?filterType=area"
@@ -109,6 +110,60 @@ export default function HomePage() {
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">POPULAR</p>
                   <h3 className="text-lg font-medium text-gray-900">人気エリアから探す</h3>
+                </div>
+                <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Sell Section - 売りたい方 */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">売りたい方へ</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Link
+              href="/ai-estimator"
+              className="group bg-gray-900 p-6 hover:bg-gray-800 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">AI ESTIMATION</p>
+                  <h3 className="text-lg font-medium text-white">AI価格査定を試す</h3>
+                  <p className="text-sm text-gray-400 mt-1">無料で今すぐ査定</p>
+                </div>
+                <svg className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+            <Link
+              href="/sell"
+              className="group bg-white p-6 hover:shadow-md transition-shadow border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">SELL</p>
+                  <h3 className="text-lg font-medium text-gray-900">売却について詳しく見る</h3>
+                  <p className="text-sm text-gray-500 mt-1">売却の流れ・メリット</p>
+                </div>
+                <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+            <Link
+              href="/properties/new"
+              className="group bg-white p-6 hover:shadow-md transition-shadow border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">REGISTER</p>
+                  <h3 className="text-lg font-medium text-gray-900">物件を登録する</h3>
+                  <p className="text-sm text-gray-500 mt-1">無料で出品</p>
                 </div>
                 <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

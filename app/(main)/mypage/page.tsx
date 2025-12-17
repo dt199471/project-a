@@ -108,14 +108,8 @@ export default function MyPage() {
     
     try {
       const response = await fetch(`/api/favorites?userId=${user.id}`)
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4',location:'app/(main)/mypage/page.tsx:fetchFavoriteProperties',message:'favorites fetch response meta',data:{userId:user.id,status:response.status,ok:response.ok},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       if (response.ok) {
         const data = await response.json()
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4',location:'app/(main)/mypage/page.tsx:fetchFavoriteProperties',message:'favorites fetched for mypage',data:{userId:user.id,count:Array.isArray(data)?data.length:null},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         const favoritesWithNumber = data.map((fav: any) => ({
           ...fav,
           property: {
