@@ -41,6 +41,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { propertyId, userId } = body
 
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'app/api/favorites/route.ts:POST',message:'favorite POST received',data:{propertyId: propertyId ?? null,userIdPresent: !!userId},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+
 
     if (!propertyId) {
       return NextResponse.json(
@@ -87,6 +91,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'app/api/favorites/route.ts:POST',message:'favorite POST created',data:{favoriteId: favorite?.id ?? null,propertyId,finalUserId},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+
 
     return NextResponse.json(favorite, { status: 201 })
   } catch (error: any) {
@@ -109,6 +117,10 @@ export async function DELETE(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const propertyId = searchParams.get("propertyId")
     const userId = searchParams.get("userId")
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'app/api/favorites/route.ts:DELETE',message:'favorite DELETE received',data:{propertyId: propertyId ?? null,userId: userId ?? null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
 
     if (!propertyId) {
       return NextResponse.json(
