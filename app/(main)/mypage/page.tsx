@@ -257,7 +257,7 @@ export default function MyPage() {
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
-                売却検討者向け
+                売りたい
               </button>
               <button
                 onClick={() => setActiveTab("buy")}
@@ -267,7 +267,7 @@ export default function MyPage() {
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
-                購入検討者向け
+                買いたい
               </button>
             </div>
 

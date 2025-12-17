@@ -31,18 +31,26 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
     }
   }
 
-  const toggleFavorite = async () => {
-    if (!user?.id) return
+  const toggleFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (!user?.id || loading) return
 
+    // 楽観的更新: 即座にUIを更新
+    const previousState = isFavorite
+    setIsFavorite(!isFavorite)
     setLoading(true)
+
     try {
-      if (isFavorite) {
+      if (previousState) {
         const response = await fetch(
           `/api/favorites?propertyId=${propertyId}&userId=${user.id}`,
           { method: "DELETE" }
         )
-        if (response.ok) {
-          setIsFavorite(false)
+        if (!response.ok) {
+          // エラー時は元に戻す
+          setIsFavorite(previousState)
         }
       } else {
         const response = await fetch("/api/favorites", {
@@ -50,12 +58,15 @@ export default function FavoriteButton({ propertyId }: FavoriteButtonProps) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ propertyId, userId: user.id }),
         })
-        if (response.ok) {
-          setIsFavorite(true)
+        if (!response.ok) {
+          // エラー時は元に戻す
+          setIsFavorite(previousState)
         }
       }
     } catch (error) {
       console.error("Error toggling favorite:", error)
+      // エラー時は元に戻す
+      setIsFavorite(previousState)
     } finally {
       setLoading(false)
     }
