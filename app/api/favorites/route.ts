@@ -26,7 +26,16 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(favorites)
+    // BigInt→Number変換（JSONシリアライゼーション対応）
+    const favoritesWithNumber = favorites.map((fav: any) => ({
+      ...fav,
+      property: fav.property ? {
+        ...fav.property,
+        price: Number(fav.property.price),
+      } : null,
+    }))
+
+    return NextResponse.json(favoritesWithNumber)
   } catch (error) {
     // #region agent log
     const e = error as any
@@ -99,8 +108,16 @@ export async function POST(request: NextRequest) {
     fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H3',location:'app/api/favorites/route.ts:POST',message:'favorite POST created',data:{favoriteId: favorite?.id ?? null,propertyId,finalUserId},timestamp:Date.now()})}).catch(()=>{});
     // #endregion
 
+    // BigInt→Number変換（JSONシリアライゼーション対応）
+    const favoriteWithNumber = {
+      ...favorite,
+      property: favorite.property ? {
+        ...favorite.property,
+        price: Number(favorite.property.price),
+      } : null,
+    }
 
-    return NextResponse.json(favorite, { status: 201 })
+    return NextResponse.json(favoriteWithNumber, { status: 201 })
   } catch (error: any) {
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5',location:'app/api/favorites/route.ts:POST',message:'favorite POST error',data:{code:error?.code ?? null,name:error?.name ?? null,message:error?.message ?? null},timestamp:Date.now()})}).catch(()=>{});
