@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface Conversation {
   property: {
@@ -23,16 +24,23 @@ interface Conversation {
 }
 
 export default function MessagesPage() {
+  const { user, loading: authLoading } = useAuth()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchConversations()
-  }, [])
+    if (user?.id) {
+      fetchConversations()
+    } else if (!authLoading) {
+      setLoading(false)
+    }
+  }, [user?.id, authLoading])
 
   const fetchConversations = async () => {
+    if (!user?.id) return
+    
     try {
-      const response = await fetch("/api/messages")
+      const response = await fetch(`/api/messages?userId=${user.id}`)
       if (response.ok) {
         const data = await response.json()
         setConversations(data)
@@ -44,10 +52,26 @@ export default function MessagesPage() {
     }
   }
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">読み込み中...</div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">メッセージ</h1>
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <p className="text-gray-500 mb-4">メッセージを表示するにはログインが必要です</p>
+            <Link href="/auth" className="text-gray-900 underline hover:no-underline">
+              ログインはこちら
+            </Link>
+          </div>
+        </div>
       </div>
     )
   }
@@ -62,11 +86,15 @@ export default function MessagesPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {conversations.map((conv, index) => (
-              <Link
-                key={index}
-                href={`/messages/${conv.property.id}/${conv.otherUser.id}`}
-              >
+            {conversations.map((conv, index) => {
+              // nullチェック
+              if (!conv.property || !conv.otherUser) return null
+              
+              return (
+                <Link
+                  key={index}
+                  href={`/messages/${conv.property.id}/${conv.otherUser.id}`}
+                >
                 <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="flex items-start space-x-4">
                     {conv.otherUser.image && (
@@ -104,7 +132,8 @@ export default function MessagesPage() {
                   </div>
                 </div>
               </Link>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

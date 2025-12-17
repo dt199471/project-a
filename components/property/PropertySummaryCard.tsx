@@ -86,7 +86,7 @@ export default function PropertySummaryCard({ property, buildYear, buildMonth, l
       </div>
 
       {/* 画像ギャラリー */}
-      <div className="mb-4">
+      <div className="mb-4 max-w-2xl">
         {/* メイン画像 */}
         <div className="relative bg-gray-100 aspect-[16/10] overflow-hidden">
           {images.length > 0 ? (

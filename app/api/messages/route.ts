@@ -44,7 +44,75 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(messages)
     }
 
-    // 全メッセージ一覧を取得
+    // ユーザーIDが指定されている場合、そのユーザーの会話一覧を取得
+    if (userId) {
+      const messages = await prisma.message.findMany({
+        where: {
+          OR: [
+            { senderId: userId },
+            { receiverId: userId },
+          ],
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+          receiver: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+          property: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+
+      // 会話をグループ化（property + otherUser の組み合わせ）
+      const conversationsMap = new Map<string, {
+        property: { id: string; title: string };
+        otherUser: { id: string; name: string | null; image: string | null };
+        lastMessage: { id: string; content: string; createdAt: Date; senderId: string };
+        unreadCount: number;
+      }>();
+
+      for (const msg of messages) {
+        const otherUser = msg.senderId === userId ? msg.receiver : msg.sender
+        if (!otherUser) continue
+        
+        const key = `${msg.property.id}-${otherUser.id}`
+        
+        if (!conversationsMap.has(key)) {
+          conversationsMap.set(key, {
+            property: msg.property,
+            otherUser: otherUser,
+            lastMessage: {
+              id: msg.id,
+              content: msg.content,
+              createdAt: msg.createdAt,
+              senderId: msg.senderId,
+            },
+            unreadCount: 0, // TODO: 未読カウントの実装
+          })
+        }
+      }
+
+      return NextResponse.json(Array.from(conversationsMap.values()))
+    }
+
+    // 全メッセージ一覧を取得（従来の挙動）
     const messages = await prisma.message.findMany({
       include: {
         sender: {
