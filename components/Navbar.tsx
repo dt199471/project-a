@@ -29,7 +29,7 @@ export default function Navbar() {
                 購入
               </Link>
               <Link
-                href="/properties/new"
+                href="/sell"
                 className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-light tracking-wide"
               >
                 売却
@@ -106,7 +106,7 @@ export default function Navbar() {
                 購入
               </Link>
               <Link
-                href="/properties/new"
+                href="/sell"
                 className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-light"
                 onClick={() => setMobileMenuOpen(false)}
               >

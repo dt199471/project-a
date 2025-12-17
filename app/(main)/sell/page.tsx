@@ -9,88 +9,254 @@ export default function SellPage() {
           <div className="max-w-3xl">
             <p className="text-sm tracking-widest uppercase mb-4 text-gray-400">SELL</p>
             <h1 className="text-4xl lg:text-6xl font-light leading-tight mb-6">
-              高級中古マンションを<br />売る
+              売る
             </h1>
             <p className="text-lg text-gray-300 leading-relaxed mb-8">
-              AI価格査定で適正価格を確認し、個人間取引で仲介手数料を削減。<br />
-              あなたの大切な資産を、最適な価格で売却しましょう。
+              物件所有のオーナー様へ
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/ai-estimator"
-                className="px-8 py-4 bg-white text-gray-900 text-sm font-medium hover:bg-gray-100 transition-colors text-center"
-              >
-                AI査定を試す
-              </Link>
-              <Link
-                href="/properties/new"
-                className="px-8 py-4 border border-white text-white text-sm font-medium hover:bg-white hover:text-gray-900 transition-colors text-center"
-              >
-                物件を登録する
-              </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Owner Actions Section */}
+      <div className="bg-white py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Link
+              href="/ai-estimator"
+              className="group p-8 border border-gray-200 hover:border-gray-900 transition-colors"
+            >
+              <div className="mb-4">
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">CONSULTATION</p>
+                <h3 className="text-xl font-medium text-gray-900 mb-3">
+                  とりあえず売却や管理の相談をしたい方
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  売却・賃料査定の相談
+                </p>
+              </div>
+              <div className="flex items-center text-gray-900 group-hover:text-gray-700 transition-colors">
+                <span className="text-sm font-medium">詳しく見る</span>
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+            <Link
+              href="/ai-estimator"
+              className="group p-8 border border-gray-200 hover:border-gray-900 transition-colors"
+            >
+              <div className="mb-4">
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">AI ESTIMATION</p>
+                <h3 className="text-xl font-medium text-gray-900 mb-3">
+                  手軽にマンションの推定相場を知りたい方
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  AI売却/賃料査定
+                </p>
+              </div>
+              <div className="flex items-center text-gray-900 group-hover:text-gray-700 transition-colors">
+                <span className="text-sm font-medium">詳しく見る</span>
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Estimation Feature Section */}
+      <div className="bg-gray-50 py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-6">
+              推定売却価格・推定賃料が<br />瞬時にオンラインでわかる
+            </h2>
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              無料会員登録後、ご所有の物件を登録することで瞬時に売却推定価格・推定賃料のAI査定結果が確認できます。また、登録した月から毎月の推移も確認できます。
+            </p>
+            <Link
+              href="/ai-estimator"
+              className="inline-block px-8 py-4 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              詳しくはこちら
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Why Choose Us Section */}
+      <div className="bg-white py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">WHY CHOOSE US</p>
+            <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">
+              Selfie Homeの売却が選ばれる理由
+            </h2>
+          </div>
+
+          {/* Reason 1: 高く売れるから */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl lg:text-3xl font-light text-gray-900 mb-4">
+                1高く売れるから
+              </h3>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                オープンな集客活動とテクノロジーによる透明性担保
+              </p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h4 className="text-xl font-medium text-gray-900 mb-4">
+                  囲い込みをせずに、<br />オープンに集客します
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                  広告効果を最大化するために、自社の購入顧客を優先するのではなく、売主様に良い購入オファーが来る可能性を最大限に高める集客活動を行なっています。
+                </p>
+                <div className="bg-gray-50 p-6 border border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">注意</p>
+                  <p className="text-sm text-gray-600">
+                    不動産業界で続く慣習「囲い込み」とは、売主様と買主様の双方から手数料を取るため他社からの問い合わせを受け付けないことです。
+                  </p>
+                </div>
+              </div>
+              <div className="bg-gray-50 p-8 border border-gray-200">
+                <h4 className="text-xl font-medium text-gray-900 mb-4">
+                  囲い込み防止のための<br />透明化システム
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  囲い込みを防ぐために、全ての内見依頼・資料請求・広告掲載依頼をリアルタイムで売主様が確認できる弊社独自のシステムがございます。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Reason 2: 早く売れるから */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl lg:text-3xl font-light text-gray-900 mb-4">
+                2早く売れるから
+              </h3>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                業界トップ水準の都心高級不動産プラットフォーム
+              </p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div>
+                <h4 className="text-xl font-medium text-gray-900 mb-4">
+                  トップクラスの<br />都心高級不動産サイト
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  売却の仲介だけでなく、Selfie Homeでは賃貸管理も行なっているため、売却価格・家賃収入をシミュレーションした上で、オーナー様にとって納得のいく選択をしていただけます。
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xl font-medium text-gray-900 mb-4">
+                  競争意識を働かせる<br />予約制オープンルーム
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  売主様の物件を見学する際に、複数の買主様候補を同時に集め説明をすることで、競争意識が働きより一層売却のスピードが早くなります。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Reason 3: 全て任せられるから */}
+          <div>
+            <div className="text-center mb-12">
+              <h3 className="text-2xl lg:text-3xl font-light text-gray-900 mb-4">
+                3全て任せられるから
+              </h3>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                賃貸・購入・売却・賃貸管理すべて弊社で対応可能
+              </p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div>
+                <h4 className="text-xl font-medium text-gray-900 mb-4">
+                  売却か貸し出しか<br />比較して判断可能
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  賃貸管理も行なっている当社では、売却価格・家賃収入の両方をシミュレーションした上で、納得のいく選択をしていただけます。
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xl font-medium text-gray-900 mb-4">
+                  お住み替えの場合は<br />購入・賃貸物件の紹介可能
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  お住み替えについては、ご売却と並行して購入物件や賃貸物件をご提案させていただき、新しい住まいへのスムーズな入居を実現いたします。
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Benefits Section */}
-      <div className="bg-white py-16 lg:py-24">
+      {/* Smart Selling Features Section */}
+      <div className="bg-gray-50 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">BENEFITS</p>
+            <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">FEATURES</p>
             <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">
-              URUCAMOで売却する3つのメリット
+              Selfie Homeのスマートな売却の特徴
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
-              <div className="w-16 h-16 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <h3 className="text-xl font-medium text-gray-900 mb-6">
+                物件の魅力最大化
+              </h3>
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-3">
+                    買主様の目に留まる<br />専属デザイナーが作成する物件資料
+                  </h4>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    お住み替えについては、ご売却と並行して購入物件や賃貸物件をご提案させていただき、新しい住まいへのスムーズな入居を実現いたします。
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-3">
+                    静止画や空室画像以外でのアプローチ
+                  </h4>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    最大360度臨場感溢れるパノラマコンテンツを撮影し、バーチャル内見（3Dウォークスルー）を実現します。
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-3 text-center">仲介手数料0円</h3>
-              <p className="text-sm text-gray-600 leading-relaxed text-center">
-                個人間取引により仲介手数料が不要。<br />
-                3,000万円の物件なら最大約100万円の節約に。
-              </p>
             </div>
             <div>
-              <div className="w-16 h-16 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+              <h3 className="text-xl font-medium text-gray-900 mb-6">
+                充実のサポート体制
+              </h3>
+              <div>
+                <h4 className="text-lg font-medium text-gray-900 mb-3">
+                  客観的に売却活動の進捗を<br />確認できる数字を基にした戦略レポート
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  定量的な数字をベースに販売進捗をご報告します。販売方針の見直しが必要な場合も、客観的な指標を元にご提案いたします。
+                </p>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-3 text-center">AI価格査定</h3>
-              <p className="text-sm text-gray-600 leading-relaxed text-center">
-                最新のマーケットデータとAI技術で、<br />
-                適正価格を瞬時に算出。売り出し価格の参考に。
-              </p>
-            </div>
-            <div>
-              <div className="w-16 h-16 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-3 text-center">買主と直接交渉</h3>
-              <p className="text-sm text-gray-600 leading-relaxed text-center">
-                メッセージ機能で買主と直接やり取り。<br />
-                物件の魅力を直接伝えられます。
-              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Process Section */}
-      <div className="bg-gray-50 py-16 lg:py-24">
+      <div className="bg-white py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">PROCESS</p>
             <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">
-              売却の流れ
+              物件売却の流れ
             </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Selfie Homeで不動産（マンション・戸建）売却する流れを紹介します。<br />
+              住み替えの場合は、同時に新たなお住まいのご提案をいたします。
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
@@ -133,48 +299,116 @@ export default function SellPage() {
         </div>
       </div>
 
-      {/* FAQ Section */}
-      <div className="bg-white py-16 lg:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Customer Reviews Section */}
+      <div className="bg-gray-50 py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">FAQ</p>
+            <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">TESTIMONIALS</p>
             <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">
-              よくある質問
+              お客様の声
             </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Selfie Homeの売却を利用した方にアンケートを実施しました。
+            </p>
           </div>
-          <div className="space-y-8">
-            <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
-                本当に仲介手数料は0円ですか？
-              </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 border border-gray-200">
+              <div className="flex items-center mb-4">
+                <div className="flex text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="ml-2 text-sm font-medium text-gray-900">5.0</span>
+              </div>
+              <p className="text-sm text-gray-500 mb-4">40代女性</p>
+              <h4 className="text-lg font-medium text-gray-900 mb-3">
+                担当エージェントについて
+              </h4>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                途中から、担当エージェントさんにほぼ決めていて、「この人は売る」と直感で思いました。ある意味自分の子供のように、すごく信頼しています。
+              </p>
+              <h4 className="text-lg font-medium text-gray-900 mb-3">コメント</h4>
               <p className="text-sm text-gray-600 leading-relaxed">
-                はい、個人間取引のため仲介手数料は発生しません。ただし、契約書作成などで司法書士への報酬が必要になる場合があります。
+                正直、内見1回で決まったので、Selfie Homeの売却の良いところをすべて感じないまま、売却活動が終わりました。担当エージェントの方や室内撮影いただいたカメラマンの方もすごく良い方でした。
               </p>
             </div>
-            <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
-                AI査定の精度はどのくらいですか？
-              </h3>
+            <div className="bg-white p-8 border border-gray-200">
+              <div className="flex items-center mb-4">
+                <div className="flex text-yellow-400">
+                  {[...Array(4)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                  <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </div>
+                <span className="ml-2 text-sm font-medium text-gray-900">4.5</span>
+              </div>
+              <p className="text-sm text-gray-500 mb-4">40代男性</p>
+              <h4 className="text-lg font-medium text-gray-900 mb-3">
+                担当エージェントについて
+              </h4>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                若くてエネルギーに溢れスピード感があり、一緒に動いてくれて大変助かった。
+              </p>
+              <h4 className="text-lg font-medium text-gray-900 mb-3">コメント</h4>
               <p className="text-sm text-gray-600 leading-relaxed">
-                最新の取引データを基に算出していますが、あくまで参考価格です。実際の売却価格は市場の需要や物件の状態によって変動します。
+                始めは売れるか不安もありましたが、担当エージェントのスピード感のある対応と、テクノロジーを駆使した革新的なアプローチで、いい買い主様との出会いが実現できてよかったです。自分たちが大切にしてきた物件なので、それを同じように取り扱ってくれた担当エージェントに感謝しています。
               </p>
             </div>
-            <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
-                売却にかかる費用は何がありますか？
-              </h3>
+            <div className="bg-white p-8 border border-gray-200">
+              <div className="flex items-center mb-4">
+                <div className="flex text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="ml-2 text-sm font-medium text-gray-900">5.0</span>
+              </div>
+              <p className="text-sm text-gray-500 mb-4">50代男性</p>
+              <h4 className="text-lg font-medium text-gray-900 mb-3">
+                担当エージェントについて
+              </h4>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                色々アドバイスしてもらい、手続き等も骨折りしてもらいました。
+              </p>
+              <h4 className="text-lg font-medium text-gray-900 mb-3">コメント</h4>
               <p className="text-sm text-gray-600 leading-relaxed">
-                登記費用、印紙税、譲渡所得税などが発生する場合があります。詳しくは税理士や司法書士にご相談ください。
+                今回知人の紹介でSelfie Homeの売却サービスのことを知り、保有物件をお任せしましたが、思ったよりもスムーズに売却できました。ありがとうございました。
               </p>
             </div>
-            <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">
-                どのくらいの期間で売却できますか？
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                物件の条件や価格設定によって異なりますが、通常1〜3ヶ月程度です。人気エリアや適正価格であれば、より早く売却できる可能性があります。
-              </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Owner Registration CTA Section */}
+      <div className="bg-white py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gray-50 border border-gray-200 p-12 text-center">
+            <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-6">
+              オーナー登録すると、<br />お持ちのマンションの資産価値が<br />毎月把握できます
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto">
+              <div className="bg-white p-6 border border-gray-200">
+                <p className="text-sm font-medium text-gray-900 mb-2">売却・賃料査定</p>
+              </div>
+              <div className="bg-white p-6 border border-gray-200">
+                <p className="text-sm font-medium text-gray-900 mb-2">マンション過去6ヶ月のトレンド</p>
+              </div>
             </div>
+            <Link
+              href="/ai-estimator"
+              className="inline-block px-8 py-4 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              かんたんAI売却/賃料査定はこちら
+            </Link>
           </div>
         </div>
       </div>
