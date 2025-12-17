@@ -87,6 +87,13 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error("Chat API error:", error)
+    console.error("Error details:", {
+      message: error?.message,
+      status: error?.status,
+      code: error?.code,
+      type: error?.type,
+      response: error?.response,
+    })
 
     // OpenAI APIエラーの詳細を返す
     if (error?.status === 401) {
@@ -103,10 +110,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+
+    // その他のエラー（詳細を返す）
+    const errorMessage = error?.message || "チャットの処理に失敗しました"
     return NextResponse.json(
-      { error: "チャットの処理に失敗しました" },
-      { status: 500 }
+      { 
+        error: errorMessage,
+        details: error?.code ? `エラーコード: ${error.code}` : undefined
+      },
+      { status: error?.status || 500 }
     )
   }
 }
+
 
