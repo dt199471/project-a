@@ -73,7 +73,20 @@ export default function ChatBot() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "エラーが発生しました")
+        const messageText: string =
+          data?.error || "エラーが発生しました。しばらくしてから再度お試しください。"
+
+        // 画面上にだけエラーを表示し、例外は投げない（Next.js の赤いエラー画面を避ける）
+        setError(messageText)
+
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: messageText,
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, errorMessage])
+        return
       }
 
       const assistantMessage: Message = {
