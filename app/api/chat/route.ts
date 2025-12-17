@@ -59,9 +59,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // OpenAI APIにリクエスト（GPT-5ナノを使用）
+    // OpenAI APIにリクエスト（GPT-4o miniを使用）
     const completion = await openai.chat.completions.create({
-      model: "gpt-5-nano", // GPT-5ナノモデル
+      model: "gpt-4o-mini", // GPT-4o miniモデル
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         ...messages.map((m) => ({
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
           content: m.content,
         })),
       ],
-      max_completion_tokens: 2000, // GPT-5-nanoではmax_completion_tokensを使用（推論トークン+出力トークンの合計）
+      max_tokens: 2000,
     })
 
     const assistantMessage = completion.choices[0]?.message?.content
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     // モデルが見つからない場合（404）
     if (error?.status === 404 || error?.code === "model_not_found") {
       return NextResponse.json(
-        { error: `モデル "gpt-5-nano" が見つかりません。APIキーにこのモデルへのアクセス権限があるか確認してください。` },
+        { error: `モデル "gpt-4o-mini" が見つかりません。APIキーにこのモデルへのアクセス権限があるか確認してください。` },
         { status: 404 }
       )
     }
