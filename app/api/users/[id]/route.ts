@@ -12,6 +12,26 @@ export async function GET(
       include: {
         properties: {
           orderBy: { createdAt: "desc" },
+          include: {
+            _count: {
+              select: {
+                favorites: true,
+                messages: true,
+              },
+            },
+            messages: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              include: {
+                sender: {
+                  select: { id: true, name: true, image: true },
+                },
+                receiver: {
+                  select: { id: true, name: true, image: true },
+                },
+              },
+            },
+          },
         },
         _count: {
           select: {
@@ -29,10 +49,13 @@ export async function GET(
       )
     }
 
-    // BigIntをNumberに変換
+    // BigIntをNumberに変換し、お気に入り数とメッセージ数を追加
     const propertiesWithNumber = user.properties.map((p: any) => ({
       ...p,
       price: Number(p.price),
+      favoriteCount: p._count.favorites,
+      messageCount: p._count.messages,
+      lastMessage: p.messages[0] || null,
     }))
 
     return NextResponse.json({

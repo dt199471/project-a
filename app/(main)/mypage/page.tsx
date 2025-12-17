@@ -20,6 +20,15 @@ interface Property {
   layout?: string | null
   area?: number | null
   description?: string
+  favoriteCount?: number
+  messageCount?: number
+  lastMessage?: {
+    id: string
+    content: string
+    createdAt: string
+    sender: { id: string; name: string | null; image: string | null }
+    receiver: { id: string; name: string | null; image: string | null }
+  } | null
 }
 
 interface UserData {
@@ -299,18 +308,32 @@ export default function MyPage() {
                         )}
                       </div>
                       <div className="flex-1 p-4 flex items-center justify-between">
-                        <div>
+                        <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             {getStatusBadge(property.status)}
                             <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
                               {property.title}
                             </h4>
                           </div>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-600 mb-1">
                             {property.price.toLocaleString()}万円
                           </p>
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                              </svg>
+                              {property.favoriteCount || 0}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                              </svg>
+                              {property.messageCount || 0}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 ml-4">
                           <button
                             onClick={() => setPreviewProperty(property)}
                             className="px-3 py-1.5 text-xs border border-blue-500 text-blue-600 hover:bg-blue-50 transition-colors"
@@ -449,31 +472,73 @@ export default function MyPage() {
               </>
             )}
 
-            {/* クイックリンク */}
-            <div className="grid grid-cols-2 gap-4 mt-8">
-              <Link
-                href="/favorites"
-                className="p-4 border border-gray-200 hover:border-gray-400 transition-colors"
-              >
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-gray-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-900">お気に入り一覧</span>
-                </div>
-              </Link>
-              <Link
-                href="/messages"
-                className="p-4 border border-gray-200 hover:border-gray-400 transition-colors"
-              >
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-gray-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-900">メッセージ</span>
-                </div>
-              </Link>
-            </div>
+            {/* クイックリンク - タブに応じて変更 */}
+            {activeTab === "sell" ? (
+              /* 売却検討者向け - 物件ごとのメッセージを表示 */
+              <div className="mt-8">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">物件への問い合わせ</h3>
+                {userData?.properties && userData.properties.filter(p => (p.messageCount || 0) > 0).length > 0 ? (
+                  <div className="space-y-3">
+                    {userData.properties.filter(p => (p.messageCount || 0) > 0).map((property) => (
+                      <Link
+                        key={property.id}
+                        href={`/messages?propertyId=${property.id}`}
+                        className="block p-4 border border-gray-200 hover:border-gray-400 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <svg className="w-5 h-5 text-gray-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            <div>
+                              <span className="text-sm font-medium text-gray-900 line-clamp-1">{property.title}</span>
+                              {property.lastMessage && (
+                                <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                                  {property.lastMessage.content}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1">
+                            {property.messageCount}件
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 border border-gray-200 text-center text-sm text-gray-500">
+                    物件への問い合わせはありません
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* 購入検討者向け - お気に入りとメッセージ */
+              <div className="grid grid-cols-2 gap-4 mt-8">
+                <Link
+                  href="/favorites"
+                  className="p-4 border border-gray-200 hover:border-gray-400 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-gray-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">お気に入り一覧</span>
+                  </div>
+                </Link>
+                <Link
+                  href="/messages"
+                  className="p-4 border border-gray-200 hover:border-gray-400 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-gray-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">メッセージ</span>
+                  </div>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
