@@ -23,7 +23,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-8">
             <div className="flex items-center space-x-6">
               <Link
-                href="/properties"
+                href="/buy"
                 className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-light tracking-wide"
               >
                 購入
@@ -99,7 +99,7 @@ export default function Navbar() {
           <div className="lg:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               <Link
-                href="/properties"
+                href="/buy"
                 className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-light"
                 onClick={() => setMobileMenuOpen(false)}
               >

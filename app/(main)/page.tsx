@@ -75,13 +75,29 @@ export default function HomePage() {
           <p className="text-sm tracking-widest uppercase mb-4 text-gray-500">買いたい方へ</p>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Link
-              href="/properties?filterType=area"
+              href="/buy"
+              className="group bg-gray-900 p-6 hover:bg-gray-800 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">BUY</p>
+                  <h3 className="text-lg font-medium text-white">購入について詳しく見る</h3>
+                  <p className="text-sm text-gray-400 mt-1">購入の流れ・メリット</p>
+                </div>
+                <svg className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+            <Link
+              href="/properties"
               className="group bg-white p-6 hover:shadow-md transition-shadow border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">SEARCH BY</p>
-                  <h3 className="text-lg font-medium text-gray-900">区から探す</h3>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">SEARCH</p>
+                  <h3 className="text-lg font-medium text-gray-900">物件を探す</h3>
+                  <p className="text-sm text-gray-500 mt-1">条件検索・エリア検索</p>
                 </div>
                 <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -89,27 +105,14 @@ export default function HomePage() {
               </div>
             </Link>
             <Link
-              href="/properties?filterType=station"
+              href="/favorites"
               className="group bg-white p-6 hover:shadow-md transition-shadow border border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">SEARCH BY</p>
-                  <h3 className="text-lg font-medium text-gray-900">駅・路線から探す</h3>
-                </div>
-                <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Link>
-            <Link
-              href="/properties?filterType=popular"
-              className="group bg-white p-6 hover:shadow-md transition-shadow border border-gray-200"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">POPULAR</p>
-                  <h3 className="text-lg font-medium text-gray-900">人気エリアから探す</h3>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">FAVORITES</p>
+                  <h3 className="text-lg font-medium text-gray-900">お気に入り物件</h3>
+                  <p className="text-sm text-gray-500 mt-1">保存した物件を確認</p>
                 </div>
                 <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -400,10 +403,10 @@ export default function HomePage() {
                 厳選された物件から理想の住まいを見つけてください
               </p>
               <Link
-                href="/properties"
+                href="/buy"
                 className="inline-block px-8 py-3 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
               >
-                物件を探す
+                購入について詳しく見る
               </Link>
             </div>
           </div>
