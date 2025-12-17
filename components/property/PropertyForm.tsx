@@ -121,16 +121,27 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files)
-      setImageFiles(files)
+      // 既存のファイルに新しいファイルを追加
+      setImageFiles(prevFiles => [...prevFiles, ...files])
+      
+      // プレビュー用のURLを作成して追加
       const imageUrls = files.map((file) => URL.createObjectURL(file))
-      setFormData({
-        ...formData,
-        images: [...formData.images, ...imageUrls],
-      })
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...imageUrls],
+      }))
     }
   }
 
   const removeImage = (index: number) => {
+    // 新しく追加したファイルも同期して削除
+    const existingImagesCount = property?.images ? JSON.parse(property.images).length : 0
+    if (index >= existingImagesCount) {
+      // 新しく追加した画像の場合、imageFilesからも削除
+      const fileIndex = index - existingImagesCount
+      setImageFiles(prevFiles => prevFiles.filter((_, i) => i !== fileIndex))
+    }
+    
     const newImages = formData.images.filter((_: string, i: number) => i !== index)
     setFormData({ ...formData, images: newImages })
   }
@@ -140,20 +151,28 @@ export default function PropertyForm({ property }: PropertyFormProps) {
     setLoading(true)
 
     try {
-      // 画像をアップロード（簡易版：base64エンコード）
-      const uploadedImages: string[] = []
+      // 既存画像を取得（base64形式で保存されているもの）
+      const existingImages: string[] = formData.images.filter((img: string) => 
+        img.startsWith('data:') || img.startsWith('http')
+      )
+      
+      // 新しい画像ファイルをbase64に変換
+      const newUploadedImages: string[] = []
       for (const file of imageFiles) {
         const reader = new FileReader()
         const base64 = await new Promise<string>((resolve) => {
           reader.onload = () => resolve(reader.result as string)
           reader.readAsDataURL(file)
         })
-        uploadedImages.push(base64)
+        newUploadedImages.push(base64)
       }
+
+      // 既存画像と新規画像を結合
+      const finalImages = [...existingImages, ...newUploadedImages]
 
       const payload = {
         ...formData,
-        images: uploadedImages.length > 0 ? uploadedImages : formData.images,
+        images: finalImages,
         userId: user?.id,
       }
 
