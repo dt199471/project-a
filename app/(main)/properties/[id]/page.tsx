@@ -129,42 +129,29 @@ export default function PropertyDetailPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Property Summary Card */}
+        {/* Property Summary Card with Image Gallery */}
         <div className="mb-12">
           <div className="relative">
             <PropertySummaryCard
-              property={property}
+              property={{
+                ...property,
+                createdAt: property.createdAt,
+                updatedAt: property.createdAt, // updatedAtがない場合はcreatedAtを使用
+              }}
               buildYear={property.buildYear}
               buildMonth={property.buildMonth}
               layout={property.layout}
               area={property.area}
+              floor={property.floor}
             />
-            {/* お気に入りボタン（タイル内） */}
+            {/* お気に入りボタン */}
             {user && !isOwner && (
-              <div className="absolute top-4 right-4 z-10">
+              <div className="absolute top-16 right-4 z-10">
                 <FavoriteButton propertyId={property.id} />
               </div>
             )}
           </div>
         </div>
-
-        {/* Additional Images */}
-        {images.length > 1 && (
-          <div className="mb-12">
-            <h2 className="text-xl font-light text-gray-900 mb-6">その他の写真</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {images.slice(1).map((img: string, idx: number) => (
-                <div key={idx} className="relative h-48 bg-gray-100 overflow-hidden border border-gray-200">
-                  <img
-                    src={img}
-                    alt={`${property.title} ${idx + 2}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Description */}
         <div className="mb-12 border-t border-gray-200 pt-12">
