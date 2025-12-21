@@ -59,20 +59,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // OpenAI APIにリクエスト（GPT-4o miniを使用）
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // GPT-4o miniモデル
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...messages.map((m) => ({
-          role: m.role as "user" | "assistant",
-          content: m.content,
-        })),
-      ],
-      max_tokens: 2000,
+    // 会話履歴を構築
+    const lastUserMessage = messages[messages.length - 1]?.content || ""
+    const conversationContext = messages.length > 1
+      ? messages.slice(0, -1).map((m) => `${m.role === "user" ? "ユーザー" : "アシスタント"}: ${m.content}`).join("\n")
+      : ""
+
+    const inputPrompt = conversationContext
+      ? `${SYSTEM_PROMPT}\n\n## 会話履歴\n${conversationContext}\n\n## 現在の質問\n${lastUserMessage}`
+      : `${SYSTEM_PROMPT}\n\n## 質問\n${lastUserMessage}`
+
+    // OpenAI Responses APIにリクエスト（GPT-5 mini + Web検索、推論なし）
+    const response = await openai.responses.create({
+      model: "gpt-5-mini", // GPT-5 miniモデル
+      tools: [{ type: "web_search" }], // Web検索を有効化
+      reasoning: { effort: "low" }, // 低推論で高速応答（web_searchと併用可能）
+      input: inputPrompt,
     })
 
-    const assistantMessage = completion.choices[0]?.message?.content
+    const assistantMessage = response.output_text
 
     if (!assistantMessage) {
       return NextResponse.json(
@@ -112,7 +117,7 @@ export async function POST(request: NextRequest) {
     // モデルが見つからない場合（404）
     if (error?.status === 404 || error?.code === "model_not_found") {
       return NextResponse.json(
-        { error: `モデル "gpt-4o-mini" が見つかりません。APIキーにこのモデルへのアクセス権限があるか確認してください。` },
+        { error: `モデル "gpt-5-mini" が見つかりません。APIキーにこのモデルへのアクセス権限があるか確認してください。` },
         { status: 404 }
       )
     }
