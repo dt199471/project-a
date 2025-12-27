@@ -106,12 +106,17 @@ export default function ConversationPage() {
             propertyId={params.propertyId as string}
             receiverId={params.userId as string}
             onMessageSent={handleMessageSent}
+            messages={messages}
+            propertyTitle={messages[0]?.property.title}
+            isSeller={true}
           />
         </div>
       </div>
     </div>
   )
 }
+
+
 
 
 

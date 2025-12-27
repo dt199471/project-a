@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import OpenAI from "openai"
+import { prisma } from "@/lib/db"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-// システムプロンプト: 不動産アシスタントとしての役割を定義
-const SYSTEM_PROMPT = `あなたは「Selfie Home」という不動産個人間売買プラットフォームのAIアシスタントです。
+// デフォルトのシステムプロンプト
+const DEFAULT_SYSTEM_PROMPT = `あなたは「Selfie Home」という不動産個人間売買プラットフォームのAIアシスタントです。
 
 ## あなたの役割
 - 不動産の購入・売却に関する質問に答える
@@ -39,6 +40,40 @@ interface ChatMessage {
   content: string
 }
 
+interface ChatSettings {
+  chatModel: string
+  systemPrompt: string
+  reasoningEffort: string
+  webSearchEnabled: boolean
+}
+
+async function getSettings(): Promise<ChatSettings> {
+  try {
+    const settings = await prisma.systemSettings.findUnique({
+      where: { id: "default" },
+    })
+
+    if (settings) {
+      return {
+        chatModel: settings.chatModel,
+        systemPrompt: settings.systemPrompt,
+        reasoningEffort: settings.reasoningEffort,
+        webSearchEnabled: settings.webSearchEnabled,
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching settings:", error)
+  }
+
+  // デフォルト設定を返す
+  return {
+    chatModel: "gpt-5-mini",
+    systemPrompt: DEFAULT_SYSTEM_PROMPT,
+    reasoningEffort: "low",
+    webSearchEnabled: true,
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // APIキーの確認
@@ -59,6 +94,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 設定を取得
+    const settings = await getSettings()
+
     // 会話履歴を構築
     const lastUserMessage = messages[messages.length - 1]?.content || ""
     const conversationContext = messages.length > 1
@@ -66,16 +104,26 @@ export async function POST(request: NextRequest) {
       : ""
 
     const inputPrompt = conversationContext
-      ? `${SYSTEM_PROMPT}\n\n## 会話履歴\n${conversationContext}\n\n## 現在の質問\n${lastUserMessage}`
-      : `${SYSTEM_PROMPT}\n\n## 質問\n${lastUserMessage}`
+      ? `${settings.systemPrompt}\n\n## 会話履歴\n${conversationContext}\n\n## 現在の質問\n${lastUserMessage}`
+      : `${settings.systemPrompt}\n\n## 質問\n${lastUserMessage}`
 
-    // OpenAI Responses APIにリクエスト（GPT-5 mini + Web検索、推論なし）
-    const response = await openai.responses.create({
-      model: "gpt-5-mini", // GPT-5 miniモデル
-      tools: [{ type: "web_search" }], // Web検索を有効化
-      reasoning: { effort: "low" }, // 低推論で高速応答（web_searchと併用可能）
+    // OpenAI Responses APIにリクエスト
+    const requestParams: any = {
+      model: settings.chatModel,
       input: inputPrompt,
-    })
+    }
+
+    // Web検索が有効な場合のみtoolsを追加
+    if (settings.webSearchEnabled) {
+      requestParams.tools = [{ type: "web_search" }]
+    }
+
+    // 推論レベルを設定
+    if (settings.reasoningEffort) {
+      requestParams.reasoning = { effort: settings.reasoningEffort }
+    }
+
+    const response = await openai.responses.create(requestParams)
 
     const assistantMessage = response.output_text
 
@@ -117,7 +165,7 @@ export async function POST(request: NextRequest) {
     // モデルが見つからない場合（404）
     if (error?.status === 404 || error?.code === "model_not_found") {
       return NextResponse.json(
-        { error: `モデル "gpt-5-mini" が見つかりません。APIキーにこのモデルへのアクセス権限があるか確認してください。` },
+        { error: `指定されたモデルが見つかりません。管理画面でモデル設定を確認してください。` },
         { status: 404 }
       )
     }
@@ -125,7 +173,7 @@ export async function POST(request: NextRequest) {
     // その他のエラー（詳細を返す）
     const errorMessage = error?.message || "チャットの処理に失敗しました"
     return NextResponse.json(
-      { 
+      {
         error: errorMessage,
         details: error?.code ? `エラーコード: ${error.code}` : undefined
       },
@@ -133,5 +181,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
-

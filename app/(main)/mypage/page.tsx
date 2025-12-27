@@ -4,6 +4,10 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
+import ActionSupportCard from "@/components/seller/ActionSupportCard"
+import CompetitorCard from "@/components/seller/CompetitorCard"
+import DocumentSummaryCard from "@/components/seller/DocumentSummaryCard"
+import InvestigationReportCard from "@/components/seller/InvestigationReportCard"
 
 interface Property {
   id: string
@@ -73,6 +77,11 @@ export default function MyPage() {
   const [loading, setLoading] = useState(true)
   const [previewProperty, setPreviewProperty] = useState<Property | null>(null)
   const [activeTab, setActiveTab] = useState<"sell" | "buy">("sell")
+  const [selectedOptions, setSelectedOptions] = useState({
+    proPhoto: false,
+    adListing: false,
+    tourAssist: false,
+  })
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -143,6 +152,72 @@ export default function MyPage() {
   if (!user) {
     return null
   }
+
+  // 節約額を計算する関数（販売中 + 成約済み）
+  const calculateSavings = () => {
+    if (!userData?.properties) return null
+
+    const targetProperties = userData.properties.filter(p => p.status === "ACTIVE" || p.status === "SOLD")
+    if (targetProperties.length === 0) return null
+
+    const activeProperties = targetProperties.filter(p => p.status === "ACTIVE")
+    const soldProperties = targetProperties.filter(p => p.status === "SOLD")
+
+    let totalPrice = 0 // 万円単位
+    let totalRegularFee = 0 // 万円単位
+    let totalSelfieHomeFee = 0 // 万円単位
+
+    targetProperties.forEach(property => {
+      // #region agent log
+      const priceInYen = property.price;
+      const price = priceInYen / 10000; // 円単位から万円単位に変換
+      fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mypage/page.tsx:171',message:'Price conversion in calculateSavings',data:{priceInYen,priceInManYen:price},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      totalPrice += price
+
+      // 正規の仲介手数料（400万円超: 売価 × 3% + 6万円）
+      let regularFee = 0
+      if (price <= 200) {
+        regularFee = price * 0.05
+      } else if (price <= 400) {
+        regularFee = price * 0.04 + 2
+      } else {
+        regularFee = price * 0.03 + 6
+      }
+      totalRegularFee += regularFee
+
+      // セルフィーホームの手数料（売価 × 0.5%）
+      const selfieHomeFee = price * 0.005
+      totalSelfieHomeFee += selfieHomeFee
+    })
+
+    // 選択された有料オプションの費用を計算（万円単位）
+    let totalOptionCost = 0
+    if (selectedOptions.proPhoto) {
+      totalOptionCost += 3 * targetProperties.length // プロ撮影: 3万円/物件
+    }
+    if (selectedOptions.adListing) {
+      totalOptionCost += 0.3 * 3 * targetProperties.length // 広告掲載: 月額0.3万円×3ヶ月/物件
+    }
+    if (selectedOptions.tourAssist) {
+      totalOptionCost += 2 * 3 * targetProperties.length // 内覧代行: 2万円×3回/物件
+    }
+
+    return {
+      activeCount: activeProperties.length,
+      soldCount: soldProperties.length,
+      totalCount: targetProperties.length,
+      totalPrice,
+      totalRegularFee,
+      totalSelfieHomeFee,
+      totalOptionCost,
+      totalWithOptions: totalSelfieHomeFee + totalOptionCost,
+      savingsBasic: totalRegularFee - totalSelfieHomeFee,
+      savingsWithOptions: totalRegularFee - (totalSelfieHomeFee + totalOptionCost),
+    }
+  }
+
+  const savings = calculateSavings()
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -274,6 +349,138 @@ export default function MyPage() {
             {/* 売却検討者向けタブ */}
             {activeTab === "sell" && (
               <>
+                {/* 節約額表示カード */}
+                {savings && (
+                  <div className="mb-8 bg-white border border-gray-200 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-base font-medium text-gray-900">手数料シミュレーション</h3>
+                      <div className="flex gap-2 text-xs">
+                        {savings.activeCount > 0 && (
+                          <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                            販売中{savings.activeCount}件
+                          </span>
+                        )}
+                        {savings.soldCount > 0 && (
+                          <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                            成約{savings.soldCount}件
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 比較表 */}
+                    <div className="space-y-3 mb-5">
+                      <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                        <div>
+                          <p className="text-sm text-gray-600">他社の仲介手数料</p>
+                          <p className="text-xs text-gray-400">売価×3%+6万円</p>
+                        </div>
+                        <p className="text-lg text-gray-400 line-through">
+                          {savings.totalRegularFee.toLocaleString(undefined, { maximumFractionDigits: 1 })}万円
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                        <div>
+                          <p className="text-sm text-gray-900">セルフィーホーム成約手数料</p>
+                          <p className="text-xs text-gray-400">売価×0.5%</p>
+                        </div>
+                        <p className="text-lg font-medium text-gray-900">
+                          {savings.totalSelfieHomeFee.toLocaleString(undefined, { maximumFractionDigits: 1 })}万円
+                        </p>
+                      </div>
+
+                      {savings.totalOptionCost > 0 && (
+                        <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                          <div>
+                            <p className="text-sm text-gray-900">選択オプション費用</p>
+                          </div>
+                          <p className="text-lg font-medium text-gray-900">
+                            +{savings.totalOptionCost.toLocaleString(undefined, { maximumFractionDigits: 1 })}万円
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 節約額 */}
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-emerald-800">節約できる金額</p>
+                        <p className="text-2xl font-bold text-emerald-600">
+                          {savings.savingsWithOptions.toLocaleString(undefined, { maximumFractionDigits: 1 })}万円
+                        </p>
+                      </div>
+                      <p className="text-xs text-emerald-600 mt-1">
+                        物件総額 {savings.totalPrice.toLocaleString()}万円 で試算
+                      </p>
+                    </div>
+
+                    {/* オプション選択 */}
+                    <div className="border-t border-gray-100 pt-4">
+                      <p className="text-sm font-medium text-gray-700 mb-3">有料オプション（任意）</p>
+                      <div className="space-y-2">
+                        <label className="flex items-center justify-between p-3 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedOptions.proPhoto}
+                              onChange={(e) => setSelectedOptions(prev => ({ ...prev, proPhoto: e.target.checked }))}
+                              className="w-4 h-4 text-gray-900 rounded border-gray-300 focus:ring-gray-500"
+                            />
+                            <span className="text-sm text-gray-700">プロ撮影</span>
+                          </div>
+                          <span className="text-sm text-gray-500">30,000円/物件</span>
+                        </label>
+
+                        <label className="flex items-center justify-between p-3 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedOptions.adListing}
+                              onChange={(e) => setSelectedOptions(prev => ({ ...prev, adListing: e.target.checked }))}
+                              className="w-4 h-4 text-gray-900 rounded border-gray-300 focus:ring-gray-500"
+                            />
+                            <span className="text-sm text-gray-700">広告掲載</span>
+                          </div>
+                          <span className="text-sm text-gray-500">月額3,000円×3ヶ月</span>
+                        </label>
+
+                        <label className="flex items-center justify-between p-3 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedOptions.tourAssist}
+                              onChange={(e) => setSelectedOptions(prev => ({ ...prev, tourAssist: e.target.checked }))}
+                              className="w-4 h-4 text-gray-900 rounded border-gray-300 focus:ring-gray-500"
+                            />
+                            <span className="text-sm text-gray-700">内覧代行</span>
+                          </div>
+                          <span className="text-sm text-gray-500">20,000円×3回</span>
+                        </label>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-3">
+                        ※ オプションをすべて利用しても他社より{savings.savingsWithOptions > 0 ? `${savings.savingsWithOptions.toLocaleString(undefined, { maximumFractionDigits: 1 })}万円` : ''}お得です
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* やることサポート */}
+                {userData?.properties && userData.properties.length > 0 && (
+                  <ActionSupportCard properties={userData.properties} />
+                )}
+
+                {/* 競合物件情報 */}
+                {userData?.properties && userData.properties.length > 0 && (
+                  <CompetitorCard properties={userData.properties} />
+                )}
+
+                {/* 書類要約 */}
+                <DocumentSummaryCard />
+
+                {/* 重要事項調査報告書サポート */}
+                <InvestigationReportCard />
+
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-medium text-gray-900">登録物件</h3>
                   <Link
@@ -316,7 +523,14 @@ export default function MyPage() {
                             </h4>
                           </div>
                           <p className="text-sm text-gray-600 mb-1">
-                            {property.price.toLocaleString()}万円
+                            {/* #region agent log */}
+                            {(() => {
+                              const priceInYen = property.price;
+                              const priceInManYen = priceInYen / 10000;
+                              fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mypage/page.tsx:522',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+                              return `${priceInManYen.toLocaleString()}万円`;
+                            })()}
+                            {/* #endregion */}
                           </p>
                           <div className="flex items-center gap-3 text-xs text-gray-500">
                             <span className="flex items-center gap-1">
@@ -416,7 +630,14 @@ export default function MyPage() {
                                 </h4>
                               </div>
                               <p className="text-sm text-gray-600 mb-1">
-                                {property.price.toLocaleString()}万円
+                                {/* #region agent log */}
+                                {(() => {
+                                  const priceInYen = property.price;
+                                  const priceInManYen = priceInYen / 10000;
+                                  fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mypage/page.tsx:622',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+                                  return `${priceInManYen.toLocaleString()}万円`;
+                                })()}
+                                {/* #endregion */}
                               </p>
                               <p className="text-xs text-gray-500">
                                 {property.prefecture}{property.city}
@@ -596,7 +817,14 @@ export default function MyPage() {
                       {previewProperty.title || "（物件名未設定）"}
                     </h3>
                     <p className="text-lg font-light text-gray-900 mb-2">
-                      {previewProperty.price ? `${previewProperty.price.toLocaleString()}万円` : "価格未設定"}
+                      {/* #region agent log */}
+                      {previewProperty.price ? (() => {
+                        const priceInYen = previewProperty.price;
+                        const priceInManYen = priceInYen / 10000;
+                        fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mypage/page.tsx:809',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+                        return `${priceInManYen.toLocaleString()}万円`;
+                      })() : "価格未設定"}
+                      {/* #endregion */}
                     </p>
                     {previewProperty.buildYear && (
                       <p className="text-xs text-gray-600 mb-1">
@@ -654,7 +882,14 @@ export default function MyPage() {
                       <div className="flex">
                         <dt className="w-24 text-gray-500">販売価格</dt>
                         <dd className="text-gray-900 font-medium">
-                          {previewProperty.price ? `${previewProperty.price.toLocaleString()}万円` : "未設定"}
+                          {/* #region agent log */}
+                          {previewProperty.price ? (() => {
+                            const priceInYen = previewProperty.price;
+                            const priceInManYen = priceInYen / 10000;
+                            fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mypage/page.tsx:881',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+                            return `${priceInManYen.toLocaleString()}万円`;
+                          })() : "未設定"}
+                          {/* #endregion */}
                         </dd>
                       </div>
                       <div className="flex">

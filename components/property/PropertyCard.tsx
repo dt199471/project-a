@@ -173,7 +173,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             {property.title}
           </h3>
           <p className="text-xl font-light text-gray-900 mb-3">
-            {property.price.toLocaleString()}万円
+            {/* #region agent log */}
+            {(() => {
+              const priceInYen = property.price;
+              const priceInManYen = priceInYen / 10000;
+              fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PropertyCard.tsx:176',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+              return `${priceInManYen.toLocaleString()}万円`;
+            })()}
+            {/* #endregion */}
           </p>
           {buildDate && (
             <p className="text-sm text-gray-600 mb-2">

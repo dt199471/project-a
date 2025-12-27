@@ -126,7 +126,7 @@ export default function SellPage() {
           <p className="text-gray-600 mb-8">
             登録は無料。まずはAI査定で適正価格を確認することもできます。
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {user ? (
               <Link
@@ -148,6 +148,27 @@ export default function SellPage() {
               className="px-8 py-4 bg-white text-gray-900 border border-gray-900 hover:bg-gray-50 font-light transition-colors"
             >
               まずはAI査定を試す
+            </Link>
+          </div>
+        </div>
+
+        {/* Business CTA */}
+        <div className="mt-8 border border-gray-200 p-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-1 bg-gray-900 text-white text-xs">業者様向け</span>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900">不動産業者の方へ</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                複数物件の一括管理、反響分析など業者様向け機能をご利用いただけます。
+              </p>
+            </div>
+            <Link
+              href="/sell/business"
+              className="px-6 py-3 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-light transition-colors whitespace-nowrap"
+            >
+              業者向けページへ
             </Link>
           </div>
         </div>

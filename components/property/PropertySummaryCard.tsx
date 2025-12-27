@@ -81,7 +81,14 @@ export default function PropertySummaryCard({ property, buildYear, buildMonth, l
         <p className="text-lg text-gray-700">
           {floor && `${floor}階 `}
           {layout && `${layout} `}
-          <span className="font-medium">{property.price.toLocaleString()}万円</span>
+          {/* #region agent log */}
+          <span className="font-medium">{(() => {
+            const priceInYen = property.price;
+            const priceInManYen = priceInYen / 10000;
+            fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PropertySummaryCard.tsx:84',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+            return `${priceInManYen.toLocaleString()}万円`;
+          })()}</span>
+          {/* #endregion */}
         </p>
       </div>
 
@@ -175,7 +182,14 @@ export default function PropertySummaryCard({ property, buildYear, buildMonth, l
           <div className="flex py-2 border-b border-gray-100">
             <dt className="w-24 text-sm text-gray-600">販売価格</dt>
             <dd className="flex-1 text-lg font-medium text-gray-900">
-              {property.price.toLocaleString()}万円
+              {/* #region agent log */}
+              {(() => {
+                const priceInYen = property.price;
+                const priceInManYen = priceInYen / 10000;
+                fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PropertySummaryCard.tsx:178',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+                return `${priceInManYen.toLocaleString()}万円`;
+              })()}
+              {/* #endregion */}
             </dd>
           </div>
 

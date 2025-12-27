@@ -10,6 +10,7 @@ interface User {
   phone: string | null
   bio: string | null
   image: string | null
+  isAdmin: boolean
 }
 
 interface AuthContextType {
@@ -111,5 +112,7 @@ export function useAuth() {
   }
   return context
 }
+
+
 
 

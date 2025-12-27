@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       phone: user.phone,
       bio: user.bio,
       image: user.image,
+      isAdmin: user.isAdmin,
     })
   } catch (error) {
     console.error("Error logging in:", error)
@@ -42,5 +43,7 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+
 
 

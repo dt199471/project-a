@@ -52,6 +52,14 @@ export default function Navbar() {
               >
                 お気に入り
               </Link>
+              {user?.isAdmin && (
+                <Link
+                  href="/admin"
+                  className="text-sm text-purple-700 hover:text-purple-900 transition-colors font-light tracking-wide"
+                >
+                  管理者
+                </Link>
+              )}
             </div>
             <div className="flex items-center space-x-4 border-l border-gray-200 pl-6">
               {!loading && (
@@ -133,6 +141,15 @@ export default function Navbar() {
               >
                 お気に入り
               </Link>
+              {user?.isAdmin && (
+                <Link
+                  href="/admin"
+                  className="text-sm text-purple-700 hover:text-purple-900 transition-colors font-light"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  管理者
+                </Link>
+              )}
               <div className="pt-4 border-t border-gray-200">
                 {!loading && (
                   user ? (

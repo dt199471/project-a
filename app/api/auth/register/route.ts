@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
       phone: user.phone,
       bio: user.bio,
       image: user.image,
+      isAdmin: user.isAdmin,
     }, { status: 201 })
   } catch (error) {
     console.error("Error registering user:", error)
@@ -50,5 +51,7 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+
 
 

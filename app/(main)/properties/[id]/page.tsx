@@ -170,7 +170,14 @@ export default function PropertyDetailPage() {
             <div className="flex border-b border-gray-200 pb-4">
               <dt className="w-40 text-sm text-gray-600 font-light">販売価格</dt>
               <dd className="flex-1 text-sm text-gray-900 font-light">
-                {property.price.toLocaleString()}万円
+                {/* #region agent log */}
+                {(() => {
+                  const priceInYen = property.price;
+                  const priceInManYen = priceInYen / 10000;
+                  fetch('http://127.0.0.1:7242/ingest/b24b0ddd-9846-4da6-bed5-1b28613f60cf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'properties/[id]/page.tsx:173',message:'Price formatting',data:{priceInYen,priceInManYen,formatted:priceInManYen.toLocaleString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'A'})}).catch(()=>{});
+                  return `${priceInManYen.toLocaleString()}万円`;
+                })()}
+                {/* #endregion */}
               </dd>
             </div>
             {property.buildYear && (
